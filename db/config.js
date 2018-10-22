@@ -2,7 +2,7 @@
 //   correctly see the env variables
 const dotenv = require('dotenv').config();
 
-const config = {
+module.exports = {
   database: process.env.DB_NAME,
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
@@ -13,5 +13,3 @@ const config = {
     underscored: false
   },
 };
-
-export default config;
