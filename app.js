@@ -3,7 +3,7 @@ import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-import db from 'src/db';
+import db from 'src/db/models';
 
 // - routes
 import indexRouter from 'src/routes/index';

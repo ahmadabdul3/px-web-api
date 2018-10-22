@@ -2,17 +2,17 @@ import 'whatwg-fetch';
 const http = {};
 
 http.base = function(method, url, data, headers) {
-  return new Promise((resolve, reject) => {
-    fetch(
-      url,
-      createFetchParams(method, data, headers)
-    ).then((response) => {
-      return response.json();
-    }).then((response) => {
-      resolve(response);
-    }).catch((error) => {
-      reject(error);
-    });
+  return fetch(
+    url,
+    createFetchParams(method, data, headers)
+  ).then((response) => {
+    console.log(response);
+    if (!response.ok) throw response;
+    return response.json();
+  }).then((response) => {
+    return response;
+  }).catch((error) => {
+    console.warn(error);
   });
 };
 
@@ -45,7 +45,6 @@ function createFetchParams(method, bodyData, headers) {
     redirect: 'follow',
     headers: new Headers({
       'Content-Type': 'application/json',
-      'X-Key-Inflection': 'camel',
       ...headers,
     }),
   }
