@@ -26,16 +26,16 @@ export default class HomePage extends Component {
 
   loadAldersIntoDb = () => {
     const alders = aldersJson();
-    // http.post('/alders/bulk-create', alders).then(res => {
-    //   console.log(res);
-    // }).catch((err) => {
-    //   console.log(err);
-    // });
-    http.post('/alders', alders[0]).then(res => {
+    http.post('/alders/bulk-create', alders).then(res => {
       console.log(res);
     }).catch((err) => {
       console.log(err);
     });
+    // http.post('/alders', alders[0]).then(res => {
+    //   console.log(res);
+    // }).catch((err) => {
+    //   console.log(err);
+    // });
   }
 
   render() {
