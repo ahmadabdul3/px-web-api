@@ -16,6 +16,9 @@ models.Sequelize = Sequelize;
 export default models;
 
 function initializeDatabase() {
+  console.log(config);
+  console.log(process.env.NODE_ENV);
+  console.log(config[process.env.NODE_ENV]);
   const { database, username, password } = config[process.env.NODE_ENV];
   return new Sequelize(database, username, password, config[process.env.NODE_ENV]);
 }
