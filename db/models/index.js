@@ -16,8 +16,8 @@ models.Sequelize = Sequelize;
 export default models;
 
 function initializeDatabase() {
-  const { database, username, password } = config.development;
-  return new Sequelize(database, username, password, config.development);
+  const { database, username, password } = config[process.env];
+  return new Sequelize(database, username, password, config[process.env]);
 }
 
 function initializeModels() {
