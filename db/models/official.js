@@ -18,7 +18,7 @@ const official = (sequelize, DataTypes) => {
     zipCode: DataTypes.TEXT,
     phone: DataTypes.TEXT,
   }, {
-    underscored: false,
+    // underscored: false,
   });
 
   official.associate = function(models) {
