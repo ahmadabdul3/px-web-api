@@ -2,7 +2,7 @@
 //   correctly see the env variables
 const dotenv = require('dotenv').config();
 
-module.exports = {
+const shared = {
   database: process.env.DB_NAME,
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
@@ -12,4 +12,10 @@ module.exports = {
   define: {
     underscored: false
   },
+};
+
+module.exports = {
+  development: shared,
+  production: shared,
+  test: shared,
 };
