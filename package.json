@@ -27,6 +27,7 @@
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0",
     "sequelize": "^4.37.10",
+    "source-map-support": "^0.5.9",
     "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
