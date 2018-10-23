@@ -59,13 +59,7 @@ export default class HomePage extends Component {
 
     return (
       <div className='home-page'>
-        <header className='home-page__header'>
-          <div className='content'>
-            <button className='green-button' onClick={this.showNewNoteDocumentModal}>
-              <i className='fas fa-plus' /> New Item
-            </button>
-          </div>
-        </header>
+
         <section className='home-page__content'>
           <div className='form-box'>
             <FormInput labelText='address' value={address} onChange={this.updateAddress} />
@@ -79,6 +73,14 @@ export default class HomePage extends Component {
     );
   }
 }
+
+// <header className='home-page__header'>
+//   <div className='content'>
+//     <button className='green-button' onClick={this.showNewNoteDocumentModal}>
+//       <i className='fas fa-plus' /> New Item
+//     </button>
+//   </div>
+// </header>
 
 function renderData(data) {
   if (!data) return;
