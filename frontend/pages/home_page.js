@@ -8,6 +8,7 @@ export default class HomePage extends Component {
   state = {
     loading: false,
     newNoteDocumentModalVisible: false,
+    address: '',
     // noteDocs: [],
   }
 
@@ -38,7 +39,24 @@ export default class HomePage extends Component {
     // });
   }
 
+  searchAddress = () => {
+    const { address } = this.state;
+    if (!address) return;
+
+    http.get('/address?address=' + address).then((res) => {
+      console.log(res);
+      if (res.status === 'err') this.setState({ data: res.message });
+      else this.setState({ data: res.data });
+    });
+  }
+
+  updateAddress = (name, address) => {
+    this.setState({ address });
+  }
+
   render() {
+    const { address, data } = this.state;
+
     return (
       <div className='home-page'>
         <header className='home-page__header'>
@@ -48,14 +66,42 @@ export default class HomePage extends Component {
             </button>
           </div>
         </header>
-        <section className='home-page__docs'>
-          <button className='green-button' onClick={this.loadAldersIntoDb}>
-            load alders into db
-          </button>
+        <section className='home-page__content'>
+          <div className='form-box'>
+            <FormInput labelText='address' value={address} onChange={this.updateAddress} />
+            <button className='address-search-button' onClick={this.searchAddress}>
+              search
+            </button>
+          </div>
+          { renderData(data) }
         </section>
       </div>
     );
   }
+}
+
+function renderData(data) {
+  if (!data) return;
+  if (!data.result) return;
+  if (!data.result.address_components) return;
+
+  return (
+    <div className='address-results'>
+      {
+        data.result.address_components.map((obj, i) => (
+          <div key={obj + i} className='address-results__group'>
+            {
+              Object.values(obj).map((val, i) => (
+                <div key={val + i}>
+                  { val }
+                </div>
+              ))
+            }
+          </div>
+        ))
+      }
+    </div>
+  )
 }
 
 function Table({ children, headers, loadMore, loading }) {
@@ -102,6 +148,47 @@ function TableRow({ transactionData }) {
       </td>
     </tr>
   );
+}
+
+function buildMapRequest() {
+  `
+  https://nhgis.newhavenct.gov/server/rest/services/Web_Services/New_Haven_Wards/MapServer/0/
+  query?
+  f=json
+  &
+  returnGeometry=true
+  &
+  spatialRel=esriSpatialRelIntersects
+  &
+  geometry=
+    %7B%22
+    xmin%22%3A-8115016.539807044%2C%22
+    ymin%22%3A5052278.334613052%2C%22
+    xmax%22%3A-8115012.956821344%2C%22
+    ymax%22%3A5052281.917598751%2C%22
+    spatialReference%22%3A%7B%22wkid%22%3A102100%7D%7D
+  &
+  geometryType=esriGeometryEnvelope
+  &
+  inSR=102100
+  &
+  outFields=OBJECTID
+    %2CWARDS
+    %2CWarrds_txt
+    %2CWards_desc
+    %2CAlder
+    %2CLCI_Ward_Group
+    %2CORIG_FID
+    %2CAlder_addr
+    %2CAlder_City
+    %2CAlder_Zip
+    %2CAlder_img
+    %2CAlder_Bio
+    %2CAlder_email
+    %2CAlder_phone
+  &
+  outSR=102100
+  `
 }
 
 function aldersJson() {
