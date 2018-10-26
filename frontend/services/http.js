@@ -11,8 +11,6 @@ http.base = function(method, url, data, headers) {
     return response.json();
   }).then((response) => {
     return response;
-  }).catch((error) => {
-    console.warn(error);
   });
 };
 

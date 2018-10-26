@@ -65,6 +65,35 @@
   }
 }
 
+.form-title {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: left;
+  margin-bottom: 50px;
+}
+
+.form-columns {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-column {
+  // display: inline-block;
+  // vertical-align: top;
+  // margin: 20px 40px;
+
+  &:first-child {
+    margin-left: 0;
+  }
+}
+
+.form-column__title {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: left;
+  margin-bottom: 15px;
+}
+
 .black-overlay {
   position: fixed;
   width: 100%;
@@ -75,14 +104,15 @@
   z-index: 995;
 }
 
-.new-note-document-modal {
-  width: 400px;
+.new-official-modal {
+  text-align: left;
+  width: 1000px;
   border-radius: 3px;
   background: white;
   position: fixed;
   z-index: 1000;
   top: 50px;
-  left: calc(50% - 200px);
+  left: calc(50% - 500px);
   overflow: hidden;
   box-shadow: 0 10px 50px 0 rgba(black, 0.5);
 
@@ -97,10 +127,15 @@
   }
 
   form {
-    padding: 20px 40px 40px;
+    padding: 20px 60px 40px;
     box-sizing: border-box;
     margin-top: 40px;
   }
+}
+
+.form-messages {
+  margin-top: 40px;
+  text-align: center;
 }
 
 .form-buttons {

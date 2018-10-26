@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 
 export default class FormInput extends Component {
+  focused = false;
+  inputRef = null;
   state = {
     active: false,
   };
-
-  inputRef = null;
 
   constructor(props) {
     super(props);
@@ -22,12 +22,29 @@ export default class FormInput extends Component {
     }
   }
 
+  // - the reason this lifecycle hook and this.focused exist is because
+  //   when the input value is controlled, and is cleared from the outside
+  //   like after submitting a form and clearing the input values,
+  //   the inputs need to go back to the inactive state
+  // - theoretically this only happens when the scenario above is encountered
+  //   (clearing out form input values programmatically) so it should
+  //   always set the active value to 'false'
+  componentDidUpdate(prevProps) {
+    if (prevProps.value !== this.props.value) {
+      if (!this.focused) this.setState({ active: !!this.props.value });
+    }
+  }
+
   setToActive = () => {
     this.setState({ active: true });
+    this.focused = true;
   }
 
   setToInactive = (e) => {
-    if (!e.target.value) this.setState({ active: false });
+    if (!e.target.value) {
+      this.setState({ active: false });
+      this.focused = false;
+    }
   }
 
   focusInput = () => {

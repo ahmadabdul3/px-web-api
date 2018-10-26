@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import appRoutes from 'src/constants/routes';
 import { NavLink } from 'react-router-dom';
 import FormInput from 'src/frontend/components/form_input';
@@ -7,7 +7,7 @@ import http from 'src/frontend/services/http';
 export default class HomePage extends Component {
   state = {
     loading: false,
-    newNoteDocumentModalVisible: false,
+    newOfficialModalVisible: false,
     address: '',
     // noteDocs: [],
   }
@@ -17,12 +17,12 @@ export default class HomePage extends Component {
     this.props.addNotesDocument({ name: docName });
   }
 
-  showNewNoteDocumentModal = () => {
-    this.setState({ newNoteDocumentModalVisible: true });
+  showNewOfficialModal = () => {
+    this.setState({ newOfficialModalVisible: true });
   }
 
-  hideNewNoteDocumentModal = () => {
-    this.setState({ newNoteDocumentModalVisible: false });
+  hideNewOfficialModal = () => {
+    this.setState({ newOfficialModalVisible: false });
   }
 
   loadAldersIntoDb = () => {
@@ -44,7 +44,7 @@ export default class HomePage extends Component {
     if (!address) return;
 
     http.get('/address?address=' + address).then((res) => {
-      console.log(res);
+      console.log('RESPONSE', res);
       if (res.status === 'err') this.setState({ data: res.message });
       else this.setState({ data: res.data });
     });
@@ -55,11 +55,24 @@ export default class HomePage extends Component {
   }
 
   render() {
-    const { address, data } = this.state;
+    const { address, data, newOfficialModalVisible } = this.state;
 
     return (
       <div className='home-page'>
-
+        {
+          newOfficialModalVisible && (
+            <NewOfficialModal
+              hideModal={this.hideNewOfficialModal}
+            />
+          )
+        }
+        <header className='home-page__header'>
+          <div className='content'>
+            <button className='green-button' onClick={this.showNewOfficialModal}>
+              <i className='fas fa-plus' /> New Official
+            </button>
+          </div>
+        </header>
         <section className='home-page__content'>
           <div className='form-box'>
             <FormInput labelText='address' value={address} onChange={this.updateAddress} />
@@ -74,13 +87,262 @@ export default class HomePage extends Component {
   }
 }
 
-// <header className='home-page__header'>
-//   <div className='content'>
-//     <button className='green-button' onClick={this.showNewNoteDocumentModal}>
-//       <i className='fas fa-plus' /> New Item
-//     </button>
-//   </div>
-// </header>
+function newOfficialModalInitialState() {
+  return {
+    formMessage: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    suffix: '',
+    email: '',
+    party: '',
+    titlePrimary: '',
+    titleSecondary: '',
+    levelOfResponsibility: '',
+    areaOfResponsibility: '',
+    streetAddress: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    phone: '',
+    firstNameMessage: '',
+    middleNameMessage: '',
+    lastNameMessage: '',
+    suffixMessage: '',
+    emailMessage: '',
+    partyMessage: '',
+    titlePrimaryMessage: '',
+    titleSecondaryMessage: '',
+    levelOfResponsibilityMessage: '',
+    areaOfResponsibilityMessage: '',
+    streetAddressMessage: '',
+    cityMessage: '',
+    stateMessage: '',
+    zipCodeMessage: '',
+    phoneMessage: '',
+  };
+}
+
+class NewOfficialModal extends PureComponent {
+  state = newOfficialModalInitialState();
+
+  onSubmit = (e) => {
+    e.preventDefault();
+    this.setState({ formMessage: '' });
+    try {
+      this.validateInputs();
+      http.post('/alders', {
+        firstName: this.state.firstName,
+        middleName: this.state.middleName,
+        lastName: this.state.lastName,
+        suffix: this.state.suffix,
+        email: this.state.email,
+        party: this.state.party,
+        titlePrimary: this.state.titlePrimary,
+        titleSecondary: this.state.titleSecondary,
+        levelOfResponsibility: this.state.levelOfResponsibility,
+        areaOfResponsibility: this.state.areaOfResponsibility,
+        streetAddress: this.state.streetAddress,
+        city: this.state.city,
+        state: this.state.state,
+        zipCode: this.state.zipCode,
+        phone: this.state.phone,
+      }).then(res => {
+        this.setState({
+          ...newOfficialModalInitialState(),
+          formMessage: 'Successfully created new official',
+        });
+        console.log(res);
+      }).catch(err => {
+        const errorMessage = err.message || 'There was an error';
+        this.setState({ formMessage: errorMessage });
+        console.warn(err);
+      });
+    } catch (errors) {
+      this.setState({ ...errors });
+    }
+  }
+
+  validateInputs() {
+    let formValid = true;
+    const errors = {};
+    const requiredFields = [
+      'firstName',
+      'lastName',
+      'titlePrimary',
+      'levelOfResponsibility',
+      'areaOfResponsibility',
+      'city',
+      'state',
+    ];
+
+    requiredFields.forEach((field) => {
+      const value = this.state[field];
+      if (!value) {
+        formValid = false;
+        errors[field + 'Message'] = 'This field is required';
+      } else {
+        errors[field + 'Message'] = '';
+      }
+    });
+
+    if (!formValid) throw errors;
+  }
+
+  onChange = (name, value) => {
+    this.setState({ [name]: value })
+  }
+
+  render() {
+    const { hideModal } = this.props;
+
+    return (
+      <div>
+        <div className='black-overlay' onClick={hideModal} />
+        <div className='new-official-modal'>
+          <form onSubmit={this.onSubmit}>
+            <div className='form-title'>
+              Create a New Official
+            </div>
+            <div className='form-columns'>
+              <div className='form-column'>
+                <div className='form-column__title'>
+                  Personal
+                </div>
+                <FormInput
+                  labelText='First Name*'
+                  onChange={this.onChange}
+                  name='firstName'
+                  value={this.state.firstName}
+                  message={this.state.firstNameMessage}
+                />
+                <FormInput
+                  labelText='Middle Name'
+                  onChange={this.onChange}
+                  name='middleName'
+                  value={this.state.middleName}
+                  message={this.state.middleNameMessage}
+                />
+                <FormInput
+                  labelText='Last Name*'
+                  onChange={this.onChange}
+                  name='lastName'
+                  value={this.state.lastName}
+                  message={this.state.lastNameMessage}
+                />
+                <FormInput
+                  labelText='Suffix'
+                  onChange={this.onChange}
+                  name='suffix'
+                  value={this.state.suffix}
+                  message={this.state.suffixMessage}
+                />
+                <FormInput
+                  labelText='Email'
+                  onChange={this.onChange}
+                  name='email'
+                  value={this.state.email}
+                  message={this.state.emailMessage}
+                />
+              </div>
+              <div className='form-column'>
+                <div className='form-column__title'>
+                  Political
+                </div>
+                <FormInput
+                  labelText='Party'
+                  onChange={this.onChange}
+                  name='party'
+                  value={this.state.party}
+                  message={this.state.partyMessage}
+                />
+                <FormInput
+                  labelText='Primary Title*'
+                  onChange={this.onChange}
+                  name='titlePrimary'
+                  value={this.state.titlePrimary}
+                  message={this.state.titlePrimaryMessage}
+                />
+                <FormInput
+                  labelText='Secondary Title'
+                  onChange={this.onChange}
+                  name='titleSecondary'
+                  value={this.state.titleSecondary}
+                  message={this.state.titleSecondaryMessage}
+                />
+                <FormInput
+                  labelText='Level of Responsibility*'
+                  onChange={this.onChange}
+                  name='levelOfResponsibility'
+                  value={this.state.levelOfResponsibility}
+                  message={this.state.levelOfResponsibilityMessage}
+                />
+                <FormInput
+                  labelText='Area of Responsibility*'
+                  onChange={this.onChange}
+                  name='areaOfResponsibility'
+                  value={this.state.areaOfResponsibility}
+                  message={this.state.areaOfResponsibilityMessage}
+                />
+              </div>
+              <div className='form-column'>
+                <div className='form-column__title'>
+                  Contact
+                </div>
+                <FormInput
+                  labelText='Address'
+                  onChange={this.onChange}
+                  name='streetAddress'
+                  value={this.state.address}
+                  message={this.state.streetAddressMessage}
+                />
+                <FormInput
+                  labelText='City*'
+                  onChange={this.onChange}
+                  name='city'
+                  value={this.state.city}
+                  message={this.state.cityMessage}
+                />
+                <FormInput
+                  labelText='State*'
+                  onChange={this.onChange}
+                  name='state'
+                  value={this.state.state}
+                  message={this.state.stateMessage}
+                />
+                <FormInput
+                  labelText='Zip Code'
+                  onChange={this.onChange}
+                  name='zipCode'
+                  value={this.state.zipCode}
+                  message={this.state.zipCodeMessage}
+                />
+                <FormInput
+                  labelText='Phone Number'
+                  onChange={this.onChange}
+                  name='phone'
+                  value={this.state.phone}
+                  message={this.state.phoneMessage}
+                />
+              </div>
+            </div>
+            <div className='form-messages'>
+              { this.state.formMessage }
+            </div>
+            <div className='form-buttons'>
+              <button type='button' className='button' onClick={hideModal}>
+                Cancel
+              </button>
+              <button className='green-button'>
+                Create
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )
+  }
+}
 
 function renderData(data) {
   if (!data) return;
