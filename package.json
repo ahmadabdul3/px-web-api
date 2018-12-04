@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./dist/server",
+    "c": "node ./repl",
     "watch": "webpack --watch",
     "heroku-postbuild": "webpack",
     "test": "mocha-webpack \"./frontend/test/**/*.test.js\" --webpack-config webpack-test.config.js --require ./frontend/test/setup.js",

@@ -7,10 +7,6 @@ export default class FormInput extends Component {
     active: false,
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     if (this.props.autoFocus) this.focusInput();
     else {
@@ -22,13 +18,18 @@ export default class FormInput extends Component {
     }
   }
 
-  // - the reason this lifecycle hook and this.focused exist is because
-  //   when the input value is controlled, and is cleared from the outside
-  //   like after submitting a form and clearing the input values,
-  //   the inputs need to go back to the inactive state
+  // - the reason this lifecycle hook and 'this.focused' exist is because
+  //   when the input value is controlled
+  //   (meaning the value for this input is stored in some component's state)
+  //   and is cleared from the outside,
+  //   (meaning the component whose state is storing the value
+  //   uses 'this.setState' to clear the value)
+  //   this input component needs to go back to the inactive state
+  //   (meaning, the underline for this component should not still have
+  //   a green color and the placeholder should shift back down and enlarge)
   // - theoretically this only happens when the scenario above is encountered
-  //   (clearing out form input values programmatically) so it should
-  //   always set the active value to 'false'
+  //   (clearing out form input values programmatically using this.setState)
+  //   so the active value should always evaluate to 'false'
   componentDidUpdate(prevProps) {
     if (prevProps.value !== this.props.value) {
       if (!this.focused) this.setState({ active: !!this.props.value });

@@ -74,17 +74,43 @@ export default class HomePage extends Component {
           </div>
         </header>
         <section className='home-page__content'>
-          <div className='form-box'>
-            <FormInput labelText='address' value={address} onChange={this.updateAddress} />
-            <button className='address-search-button' onClick={this.searchAddress}>
-              search
-            </button>
-          </div>
-          { renderData(data) }
+
         </section>
       </div>
     );
   }
+}
+
+// <div className='form-box'>
+//   <FormInput labelText='address' value={address} onChange={this.updateAddress} />
+//   <button className='address-search-button' onClick={this.searchAddress}>
+//     search
+//   </button>
+// </div>
+// { renderData(data) }
+
+function renderData(data) {
+  if (!data) return;
+  if (!data.result) return;
+  if (!data.result.address_components) return;
+
+  return (
+    <div className='address-results'>
+      {
+        data.result.address_components.map((obj, i) => (
+          <div key={obj + i} className='address-results__group'>
+            {
+              Object.values(obj).map((val, i) => (
+                <div key={val + i}>
+                  { val }
+                </div>
+              ))
+            }
+          </div>
+        ))
+      }
+    </div>
+  )
 }
 
 function newOfficialModalInitialState() {
@@ -342,30 +368,6 @@ class NewOfficialModal extends PureComponent {
       </div>
     )
   }
-}
-
-function renderData(data) {
-  if (!data) return;
-  if (!data.result) return;
-  if (!data.result.address_components) return;
-
-  return (
-    <div className='address-results'>
-      {
-        data.result.address_components.map((obj, i) => (
-          <div key={obj + i} className='address-results__group'>
-            {
-              Object.values(obj).map((val, i) => (
-                <div key={val + i}>
-                  { val }
-                </div>
-              ))
-            }
-          </div>
-        ))
-      }
-    </div>
-  )
 }
 
 function Table({ children, headers, loadMore, loading }) {

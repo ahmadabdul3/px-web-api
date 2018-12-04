@@ -3,9 +3,17 @@ import path from 'path';
 import Sequelize from 'sequelize';
 import config from 'src/db/config';
 import official from './official';
+import politician from './politician';
+import officeHolderTerm from './office_holder_term';
+import candidateTerm from './candidate_term';
+import contactInfo from './contact_info';
 
 const modelInitializers = [
   official,
+  politician,
+  officeHolderTerm,
+  candidateTerm,
+  contactInfo,
 ];
 const sequelize = initializeDatabase();
 const models = initializeModels();
