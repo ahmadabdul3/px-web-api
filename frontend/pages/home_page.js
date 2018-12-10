@@ -9,7 +9,17 @@ export default class HomePage extends Component {
     loading: false,
     newOfficialModalVisible: false,
     address: '',
+    politicians: [],
     // noteDocs: [],
+  }
+
+  componentDidMount() {
+    http.get('/politicians').then(res => {
+      console.log(res);
+      this.setState({ politicians: res.politicians });
+    }).catch(err => {
+      console.error('error', err);
+    });
   }
 
   addNoteDoc = ({ docName }) => {
@@ -66,20 +76,41 @@ export default class HomePage extends Component {
             />
           )
         }
-        <header className='home-page__header'>
-          <div className='content'>
-            <button className='green-button' onClick={this.showNewOfficialModal}>
-              <i className='fas fa-plus' /> New Official
-            </button>
-          </div>
-        </header>
         <section className='home-page__content'>
-
+          <div className='content'>
+            { renderPoliticians(this.state.politicians) }
+          </div>
         </section>
       </div>
     );
   }
 }
+
+function renderPoliticians(politicians) {
+  if (politicians.length < 1) return (<div>Error loading data</div>);
+  return politicians.map(p => {
+    return (
+      <div key={p.id} className='card'>
+        {
+          Object.keys(p).map((key, i) => (
+            <div key={p.id + key}>
+              <span className='key'>{key}</span>
+              <span>{p[key]}</span>
+            </div>
+          ))
+        }
+      </div>
+    )
+  });
+}
+
+// <header className='home-page__header'>
+//   <div className='content'>
+//     <button className='green-button' onClick={this.showNewOfficialModal}>
+//       <i className='fas fa-plus' /> New Official
+//     </button>
+//   </div>
+// </header>
 
 // <div className='form-box'>
 //   <FormInput labelText='address' value={address} onChange={this.updateAddress} />

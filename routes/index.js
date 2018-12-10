@@ -4,6 +4,25 @@ const router = express.Router();
 import models from 'src/db/models';
 import fetch from 'node-fetch';
 
+router.get('/politicians', (req, res) => {
+  models.politician.findAll({ include: [ models.officeHolderTerm, models.contactInfo ] }).then(r => {
+    const politicians = r.map((p, i) => {
+      const modelData = p.dataValues;
+      return {
+        ...modelData,
+        ...modelData.officeHolderTerms[0].dataValues,
+        ...modelData.contactInfos[0].dataValues,
+        officeHolderTerms: '',
+        contactInfos: '',
+        id: modelData.id,
+      };
+    });
+    res.json({ status: 'success', politicians });
+  }).catch(err => {
+    res.json({ status: 'fail', err });
+  });
+});
+
 router.post('/alders', (req, res) => {
   models.official.create(req.body).then((sqlRes) => {
     res.json({ status: 'success' });
