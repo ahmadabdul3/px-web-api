@@ -91,14 +91,31 @@ function renderPoliticians(politicians) {
   return politicians.map(p => {
     return (
       <div key={p.id} className='card'>
-        {
-          Object.keys(p).map((key, i) => (
-            <div key={p.id + key}>
-              <span className='key'>{key}</span>
-              <span>{p[key]}</span>
-            </div>
-          ))
-        }
+        <div className='name'>
+          <span>
+            { p.firstName }
+          </span> <span>
+            { p.middleName }
+          </span> <span>
+            { p.lastName }
+          </span> <span>
+            { p.suffix }
+          </span>
+        </div>
+        <div>
+          <span>
+            { p.levelOfResponsibility }
+          </span> <span>
+            { p.areaOfResponsibility },
+          </span> <span>
+            { p.titlePrimary } -
+          </span> <span>
+            { p.party }
+          </span>
+        </div>
+        <div className='contact-info'>
+          { renderContactInfo(p) }
+        </div>
       </div>
     )
   });
@@ -119,6 +136,28 @@ function renderPoliticians(politicians) {
 //   </button>
 // </div>
 // { renderData(data) }
+
+function renderContactInfo(p) {
+  const contactInfoKeys = [
+    'email',
+    'phone',
+    'streetAddress',
+    'city',
+    'state',
+    'zipCode',
+  ];
+  return Object.keys(p).map((key, i) => {
+    if (contactInfoKeys.includes(key)) {
+      return (
+        <div key={p.id + key}>
+          <span className='key'>{key}</span>
+          <span>{p[key]}</span>
+        </div>
+      );
+    }
+    return (<div/>);
+  });
+}
 
 function renderData(data) {
   if (!data) return;
