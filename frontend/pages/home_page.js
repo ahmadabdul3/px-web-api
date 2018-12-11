@@ -10,15 +10,15 @@ export default class HomePage extends Component {
     newOfficialModalVisible: false,
     address: '',
     politicians: [],
+    error: '',
     // noteDocs: [],
   }
 
   componentDidMount() {
     http.get('/politicians').then(res => {
-      console.log(res);
-      this.setState({ politicians: res.politicians });
+      this.setState({ politicians: res.politicians, error: '' });
     }).catch(err => {
-      console.error('error', err);
+      this.setState({ error: 'error' });
     });
   }
 
@@ -78,7 +78,11 @@ export default class HomePage extends Component {
         }
         <section className='home-page__content'>
           <div className='content'>
-            { renderPoliticians(this.state.politicians) }
+            {
+              this.state.error ?
+                <div>Error loading data</div>
+                : renderPoliticians(this.state.politicians)
+            }
           </div>
         </section>
       </div>
@@ -87,7 +91,7 @@ export default class HomePage extends Component {
 }
 
 function renderPoliticians(politicians) {
-  if (politicians.length < 1) return (<div>Error loading data</div>);
+  if (politicians.length < 1) return (<div>Loading data</div>);
   return politicians.map(p => {
     return (
       <div key={p.id} className='card'>
@@ -147,15 +151,13 @@ function renderContactInfo(p) {
     'zipCode',
   ];
   return Object.keys(p).map((key, i) => {
-    if (contactInfoKeys.includes(key)) {
-      return (
-        <div key={p.id + key}>
-          <span className='key'>{key}</span>
-          <span>{p[key]}</span>
-        </div>
-      );
-    }
-    return (<div/>);
+    if (!contactInfoKeys.includes(key)) return;
+    return (
+      <div key={p.id + key}>
+        <span className='key'>{key}</span>
+        <span>{p[key]}</span>
+      </div>
+    );
   });
 }
 
