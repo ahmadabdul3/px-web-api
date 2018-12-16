@@ -6,11 +6,9 @@ http.base = function(method, url, data, headers) {
     url,
     createFetchParams(method, data, headers)
   ).then((response) => {
-    console.log(response);
-    if (!response.ok) throw response;
-    return response.json();
-  }).then((response) => {
-    return response;
+    const json = response.json();
+    if (!response.ok) return json.then(err => { throw err; });
+    return json;
   });
 };
 

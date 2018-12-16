@@ -1,6 +1,23 @@
 import db from 'src/db/models';
 const { sequelize } = db;
 
+export function reassignPoliticianContactInfoToOfficeHolderTerm() {
+  db.politician.findAll({
+    include: [ db.officeHolderTerm ]
+  }).then(politicians => {
+    politicians.forEach(p => {
+      const politician = p.get({ plain: true });
+      const politicianId = politician.id;
+      const officeHolderTermId = politician.officeHolderTerms[0].id;
+
+      db.contactInfo.update(
+        { politicianId: null, officeHolderTermId },
+        { where: { politicianId } }
+      );
+    });
+  });
+}
+
 export function migrateOfficialsData() {
   db.official.findAll().then(officials => {
     officials.forEach(official => {

@@ -6,21 +6,80 @@ import fetch from 'node-fetch';
 import prepPoliticianModelForUi from 'src/services/ui_data_prep/ui_data_prepper_politician';
 
 router.get('/politicians', (req, res) => {
-  models.politician.findAll({ include: [ models.officeHolderTerm, models.contactInfo ] }).then(r => {
+  models.politician.findAll({
+    include: [{
+      model: models.officeHolderTerm,
+      include: [{
+        model: models.contactInfo
+      }],
+    }]
+  }).then(r => {
     const politicians = r.map((p, i) => {
-      const modelData = p.dataValues;
+      const politician = p.get({ plain: true });
+      const officeHolderTerm = politician.officeHolderTerms[0];
+      const contactInfo = officeHolderTerm.contactInfos[0];
+
       return prepPoliticianModelForUi({
-        ...modelData,
-        ...modelData.officeHolderTerms[0].dataValues,
-        ...modelData.contactInfos[0].dataValues,
-        officeHolderTerms: '',
-        contactInfos: '',
-        id: modelData.id,
+        ...politician,
+        ...officeHolderTerm,
+        ...contactInfo,
+        id: politician.id,
       });
     });
     res.json({ status: 'success', politicians });
   }).catch(err => {
     res.json({ status: 'fail', err });
+  });
+});
+
+router.post('/politicians', (req, res) => {
+  const {
+    levelOfResponsibility,
+    areaOfResponsibility,
+    city,
+    state
+  } = req.body;
+
+  console.log(req.body);
+
+  models.politician.findAll({
+    include: [{
+      model: models.officeHolderTerm,
+      required: true,
+      where: { levelOfResponsibility, areaOfResponsibility },
+      include: [{
+        model: models.contactInfo,
+        required: true,
+        where: {
+          city: { ilike: city },
+          state: { ilike: state },
+        },
+      }],
+    }],
+  }).then(r => {
+    if (r.length > 0) {
+      const politicians = r.map((p, i) => {
+        const politician = p.get({ plain: true });
+        const officeHolderTerm = politician.officeHolderTerms[0];
+        const contactInfo = officeHolderTerm.contactInfos[0];
+
+        return prepPoliticianModelForUi({
+          ...politician,
+          ...officeHolderTerm,
+          ...contactInfo,
+          id: politician.id,
+        });
+      });
+      res.status(409).json({
+        status: 'fail',
+        message: "There's already an office holder for that position",
+        data: politicians,
+      });
+    } else {
+      res.json({ status: 'success', message: 'created successfully' });
+    }
+  }).catch(err => {
+    res.json({ status: 'fail', message: err });
   });
 });
 

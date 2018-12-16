@@ -76,6 +76,13 @@ export default class HomePage extends Component {
             />
           )
         }
+        <header className='home-page__header'>
+          <div className='content'>
+            <button className='green-button' onClick={this.showNewOfficialModal}>
+              <i className='fas fa-plus' /> New Official
+            </button>
+          </div>
+        </header>
         <section className='home-page__content'>
           <div className='content'>
             {
@@ -124,14 +131,6 @@ function renderPoliticians(politicians) {
     )
   });
 }
-
-// <header className='home-page__header'>
-//   <div className='content'>
-//     <button className='green-button' onClick={this.showNewOfficialModal}>
-//       <i className='fas fa-plus' /> New Official
-//     </button>
-//   </div>
-// </header>
 
 // <div className='form-box'>
 //   <FormInput labelText='address' value={address} onChange={this.updateAddress} />
@@ -229,7 +228,7 @@ class NewOfficialModal extends PureComponent {
     this.setState({ formMessage: '' });
     try {
       this.validateInputs();
-      http.post('/alders', {
+      http.post('/politicians', {
         firstName: this.state.firstName,
         middleName: this.state.middleName,
         lastName: this.state.lastName,
