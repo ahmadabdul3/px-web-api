@@ -23,10 +23,6 @@
     width: 100%;
     transition: width 0.2s ease;
   }
-
-  .form-input__input{
-    border-color: $green;
-  }
 }
 
 .form-input__label-input-wrapper {
@@ -42,11 +38,12 @@
   color: gray;
 
   &:hover {
-    cursor: 'text';
+    cursor: text;
   }
 }
 
 .form-input__input {
+  box-shadow: 0 0 0 200px white inset;
   width: 100%;
   min-width: 220px;
   padding: 5px 5px 6px 2px;
@@ -65,14 +62,14 @@
   border: 1px solid #ddd;
 
   &:focus {
-    border-color: $green;
+    border-color: transparent;
     outline: none;
   }
 }
 
 .form-input__input-border {
   position: absolute;
-  top: 100%;
+  top: calc(100% - 1px);
   left: 0;
   width: 0;
   height: 1px;
