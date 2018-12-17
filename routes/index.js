@@ -37,16 +37,19 @@ router.post('/politicians', (req, res) => {
     levelOfResponsibility,
     areaOfResponsibility,
     city,
-    state
+    state,
+    titlePrimary
   } = req.body;
-
-  console.log(req.body);
 
   models.politician.findAll({
     include: [{
       model: models.officeHolderTerm,
       required: true,
-      where: { levelOfResponsibility, areaOfResponsibility },
+      where: {
+        levelOfResponsibility,
+        areaOfResponsibility,
+        titlePrimary,
+      },
       include: [{
         model: models.contactInfo,
         required: true,

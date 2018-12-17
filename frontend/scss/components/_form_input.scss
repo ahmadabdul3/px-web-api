@@ -4,6 +4,13 @@
   position: relative;
   text-align: left;
 
+  &:hover {
+    .form-input__input {
+      border-color: rgba(0, 0, 0, 0.6);
+      transition: border-color 0.15s ease;
+    }
+  }
+
   &:first-child {
     margin-top: 0;
   }
@@ -47,12 +54,14 @@
   width: 100%;
   min-width: 220px;
   padding: 5px 5px 6px 2px;
+  min-height: 38px;
   font-size: 16px;
   box-sizing: border-box;
   outline: none;
   background: none;
   border: 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  transition: border-color 0.15s ease;
 }
 
 .form-input__textarea {
@@ -188,5 +197,32 @@
   .form-textarea__message {
     @extend .form-input__message;
     margin-top: 0;
+  }
+}
+
+.px-select {
+  .px-select__control {
+    border: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+    border-radius: 0;
+
+    &:hover {
+      border-color: rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  .px-select__control--is-focused {
+    border: 0;
+    border-bottom: 1px solid $green;
+    box-shadow: 0 0 0 200px white inset;
+
+    &:hover {
+      border-color: $green;
+    }
+  }
+
+  .px-select__value-container {
+    padding: 0;
+    justify-content: flex-start;
   }
 }

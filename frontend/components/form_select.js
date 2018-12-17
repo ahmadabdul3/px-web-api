@@ -1,79 +1,120 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
+import Select from 'react-select/lib/Creatable';
 
-export default class FormInput extends Component {
+export default class FormSelect extends PureComponent {
   state = {
-    active: false,
+    createdOptions: [],
   };
 
-  inputRef = null;
-
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidMount() {
-    if (this.props.autoFocus) this.focusInput();
-    else {
-      setTimeout(() => {
-        if (this.inputRef.value) {
-          this.setState({ active: true });
-        }
-      }, 200);
-    }
-  }
-
-  setToActive = () => {
-    this.setState({ active: true });
-  }
-
-  setToInactive = (e) => {
-    if (!e.target.value) this.setState({ active: false });
-  }
-
-  focusInput = () => {
-    this.inputRef.focus();
-  }
-
-  onChange = (e) => {
+  onChange = ({ value }) => {
     const { name, onChange } = this.props;
-    const { value } = e.target;
-
-    onChange(name, value);
-  }
-
-  renderOptions() {
-    const { options } = this.props;
-
-    return options.map((option, key) => {
-      return (
-        <option value={option.value} key={key}>
-          { option.text }
-        </option>
-      );
-    });
-  }
+    onChange({ value, name });
+  };
 
   render() {
-    const { labelText, name, value, message, options  } = this.props;
-    const { active } = this.state;
+    const { onChange, options, placeholder, message  } = this.props;
+    const { createdOptions } = this.state;
 
     return (
-      <div className='form-select'>
-        <label className='form-select__label' onClick={this.focusInput}>
-          { labelText }
-        </label>
-        <select
-          ref={(input) => { this.inputRef = input; }}
-          name={name}
-          value={value}
-          className='form-select__select'
-          onChange={this.onChange}>
-          { this.renderOptions() }
-        </select>
-        <footer className='form-select__message'>
-           { message }
+      <div className='form-input'>
+        <Select
+          className='px-select'
+          classNamePrefix='px-select'
+          placeholder={placeholder}
+          onChange={this.onChange}
+          options={options}
+          formatCreateLabel={val => `Custom value: '${val}'`}
+        />
+        <footer className='form-input__message'>
+          { message }
         </footer>
       </div>
     );
   }
+}
+
+export class FormSelectState extends PureComponent {
+  render() {
+    const { onChange, message, isRequired, name } = this.props;
+    let placeholder = 'State';
+    if (isRequired) placeholder += '*';
+
+    return (
+      <FormSelect
+        placeholder={placeholder}
+        name={name}
+        message={message}
+        onChange={onChange}
+        options={getStateOptions()}
+      />
+    );
+  }
+}
+
+function getStateOptions() {
+  return [
+    { value: 'AL', label: 'Alabama' },
+    { value: 'AK', label: 'Alaska' },
+    { value: 'AS', label: 'American Samoa' },
+    { value: 'AZ', label: 'Arizona' },
+    { value: 'AR', label: 'Arkansas' },
+    { value: 'CA', label: 'California' },
+    { value: 'CO', label: 'Colorado' },
+    { value: 'CT', label: 'Connecticut' },
+    { value: 'DE', label: 'Delaware' },
+    { value: 'DC', label: 'District Of Columbia' },
+    { value: 'FM', label: 'Federated States Of Micronesia' },
+    { value: 'FL', label: 'Florida' },
+    { value: 'GA', label: 'Georgia' },
+    { value: 'GU', label: 'Guam' },
+    { value: 'HI', label: 'Hawaii' },
+    { value: 'ID', label: 'Idaho' },
+    { value: 'IL', label: 'Illinois' },
+    { value: 'IN', label: 'Indiana' },
+    { value: 'IA', label: 'Iowa' },
+    { value: 'KS', label: 'Kansas' },
+    { value: 'KY', label: 'Kentucky' },
+    { value: 'LA', label: 'Louisiana' },
+    { value: 'ME', label: 'Maine' },
+    { value: 'MH', label: 'Marshall Islands' },
+    { value: 'MD', label: 'Maryland' },
+    { value: 'MA', label: 'Massachusetts' },
+    { value: 'MI', label: 'Michigan' },
+    { value: 'MN', label: 'Minnesota' },
+    { value: 'MS', label: 'Mississippi' },
+    { value: 'MO', label: 'Missouri' },
+    { value: 'MT', label: 'Montana' },
+    { value: 'NE', label: 'Nebraska' },
+    { value: 'NV', label: 'Nevada' },
+    { value: 'NH', label: 'New Hampshire' },
+    { value: 'NJ', label: 'New Jersey' },
+    { value: 'NM', label: 'New Mexico' },
+    { value: 'NY', label: 'New York' },
+    { value: 'NC', label: 'North Carolina' },
+    { value: 'ND', label: 'North Dakota' },
+    { value: 'MP', label: 'Northern Mariana Islands' },
+    { value: 'OH', label: 'Ohio' },
+    { value: 'OK', label: 'Oklahoma' },
+    { value: 'OR', label: 'Oregon' },
+    { value: 'PW', label: 'Palau' },
+    { value: 'PA', label: 'Pennsylvania' },
+    { value: 'PR', label: 'Puerto Rico' },
+    { value: 'RI', label: 'Rhode Island' },
+    { value: 'SC', label: 'South Carolina' },
+    { value: 'SD', label: 'South Dakota' },
+    { value: 'TN', label: 'Tennessee' },
+    { value: 'TX', label: 'Texas' },
+    { value: 'UT', label: 'Utah' },
+    { value: 'VT', label: 'Vermont' },
+    { value: 'VI', label: 'Virgin Islands' },
+    { value: 'VA', label: 'Virginia' },
+    { value: 'WA', label: 'Washington' },
+    { value: 'WV', label: 'West Virginia' },
+    { value: 'WI', label: 'Wisconsin' },
+    { value: 'WY', label: 'Wyoming' },
+  ].map(option => {
+    const { label } = option;
+    const value = label.toLowerCase();
+    return { label, value };
+  });
 }

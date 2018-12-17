@@ -2,6 +2,7 @@ import React, { Component, PureComponent } from 'react';
 import appRoutes from 'src/constants/routes';
 import { NavLink } from 'react-router-dom';
 import FormInput from 'src/frontend/components/form_input';
+import FormSelect, { FormSelectState } from 'src/frontend/components/form_select';
 import http from 'src/frontend/services/http';
 
 export default class HomePage extends Component {
@@ -224,6 +225,7 @@ class NewOfficialModal extends PureComponent {
   state = newOfficialModalInitialState();
 
   onSubmit = (e) => {
+    console.log(this.state);
     e.preventDefault();
     this.setState({ formMessage: '' });
     try {
@@ -283,10 +285,19 @@ class NewOfficialModal extends PureComponent {
       }
     });
 
+    const { titlePrimary, levelOfResponsibility } = this.state;
+    if (titlePrimary === 'alder' && levelOfResponsibility !== 'district') {
+      errors.formMessage = "An Alder's 'Level of Responsibility' should be 'District'";
+      formValid = false;
+    } else if (titlePrimary === 'mayor' && levelOfResponsibility !== 'city') {
+      errors.formMessage = "A Mayor's 'Level of Responsibility' should be 'City'";
+      formValid = false;
+    }
+
     if (!formValid) throw errors;
   }
 
-  onChange = (name, value) => {
+  onChange = ({ name, value }) => {
     this.setState({ [name]: value })
   }
 
@@ -346,19 +357,27 @@ class NewOfficialModal extends PureComponent {
                 <div className='form-column__title'>
                   Political
                 </div>
-                <FormInput
-                  labelText='Party'
-                  onChange={this.onChange}
+                <FormSelect
+                  placeholder='Party'
                   name='party'
-                  value={this.state.party}
-                  message={this.state.partyMessage}
-                />
-                <FormInput
-                  labelText='Primary Title*'
                   onChange={this.onChange}
+                  message={this.state.partyMessage}
+                  options={[
+                    { value: '', label: 'Party', isDisabled: true },
+                    { value: 'democratic', label: 'Democratic' },
+                    { value: 'republican', label: 'Republican' },
+                  ]}
+                />
+                <FormSelect
+                  placeholder='Primary Title*'
                   name='titlePrimary'
-                  value={this.state.titlePrimary}
+                  onChange={this.onChange}
                   message={this.state.titlePrimaryMessage}
+                  options={[
+                    { value: '', label: 'Primary Title', isDisabled: true },
+                    { value: 'alder', label: 'Alder' },
+                    { value: 'mayor', label: 'Mayor' },
+                  ]}
                 />
                 <FormInput
                   labelText='Secondary Title'
@@ -367,19 +386,28 @@ class NewOfficialModal extends PureComponent {
                   value={this.state.titleSecondary}
                   message={this.state.titleSecondaryMessage}
                 />
-                <FormInput
-                  labelText='Level of Responsibility*'
-                  onChange={this.onChange}
+                <FormSelect
+                  placeholder='Level of Responsibility*'
                   name='levelOfResponsibility'
-                  value={this.state.levelOfResponsibility}
-                  message={this.state.levelOfResponsibilityMessage}
-                />
-                <FormInput
-                  labelText='Area of Responsibility*'
                   onChange={this.onChange}
+                  message={this.state.levelOfResponsibilityMessage}
+                  options={[
+                    { value: '', label: 'Level of Responsibility', isDisabled: true },
+                    { value: 'district', label: 'District' },
+                    { value: 'city', label: 'City' },
+                    { value: 'state', label: 'State' },
+                  ]}
+                />
+                <FormSelect
+                  placeholder='Area of Responsibility*'
                   name='areaOfResponsibility'
-                  value={this.state.areaOfResponsibility}
+                  onChange={this.onChange}
                   message={this.state.areaOfResponsibilityMessage}
+                  options={[
+                    { value: '', label: 'Area of Responsibility', isDisabled: true },
+                    { value: 'new haven', label: 'New Haven' },
+                    { value: 'connecticut', label: 'Connecticut' },
+                  ]}
                 />
               </div>
               <div className='form-column'>
@@ -387,24 +415,33 @@ class NewOfficialModal extends PureComponent {
                   Contact
                 </div>
                 <FormInput
+                  labelText='Phone Number'
+                  onChange={this.onChange}
+                  name='phone'
+                  value={this.state.phone}
+                  message={this.state.phoneMessage}
+                />
+                <FormInput
                   labelText='Address'
                   onChange={this.onChange}
                   name='streetAddress'
                   value={this.state.address}
                   message={this.state.streetAddressMessage}
                 />
-                <FormInput
-                  labelText='City*'
-                  onChange={this.onChange}
+                <FormSelect
+                  placeholder='City*'
                   name='city'
-                  value={this.state.city}
-                  message={this.state.cityMessage}
-                />
-                <FormInput
-                  labelText='State*'
                   onChange={this.onChange}
+                  message={this.state.cityMessage}
+                  options={[
+                    { value: '', label: 'City', isDisabled: true },
+                    { value: 'new haven', label: 'New Haven' },
+                  ]}
+                />
+                <FormSelectState
+                  isRequired
                   name='state'
-                  value={this.state.state}
+                  onChange={this.onChange}
                   message={this.state.stateMessage}
                 />
                 <FormInput
@@ -413,13 +450,6 @@ class NewOfficialModal extends PureComponent {
                   name='zipCode'
                   value={this.state.zipCode}
                   message={this.state.zipCodeMessage}
-                />
-                <FormInput
-                  labelText='Phone Number'
-                  onChange={this.onChange}
-                  name='phone'
-                  value={this.state.phone}
-                  message={this.state.phoneMessage}
                 />
               </div>
             </div>
