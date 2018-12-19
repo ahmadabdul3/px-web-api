@@ -6,7 +6,7 @@
 
   &:hover {
     .form-input__input {
-      border-color: rgba(0, 0, 0, 0.6);
+      border-color: rgba(0, 0, 0, 0.5);
       transition: border-color 0.15s ease;
     }
   }
@@ -14,21 +14,26 @@
   &:first-child {
     margin-top: 0;
   }
-}
 
-.form-input-active {
-  @extend .form-input;
+  &.active {
+    .form-input__label {
+      font-size: 11px;
+      bottom: 30px;
+      color: $text-color;
+      transition: bottom 0.15s ease, font-size 0.15s ease, color 0.15s ease;
+    }
 
-  .form-input__label {
-    font-size: 11px;
-    bottom: 30px;
-    color: $text-color;
-    transition: bottom 0.15s ease, font-size 0.15s ease, color 0.15s ease;
+    .form-input__input {
+      border-color: rgba(0, 0, 0, 0.6);
+      transition: border-color 0.15s ease;
+    }
   }
 
-  .form-input__input-border {
-    width: 100%;
-    transition: width 0.2s ease;
+  &.error {
+    .form-input__input {
+      border-color: $red;
+      transition: border-color 0.15s ease;
+    }
   }
 }
 
@@ -43,6 +48,7 @@
   left: 1px;
   transition: bottom 0.15s ease, font-size 0.15s ease;
   color: gray;
+  z-index: 1;
 
   &:hover {
     cursor: text;
@@ -53,7 +59,7 @@
   box-shadow: 0 0 0 200px white inset;
   width: 100%;
   min-width: 220px;
-  padding: 5px 5px 6px 2px;
+  padding: 5px 5px 0px 2px;
   min-height: 38px;
   font-size: 16px;
   box-sizing: border-box;
@@ -76,98 +82,12 @@
   }
 }
 
-.form-input__input-border {
-  position: absolute;
-  top: calc(100% - 1px);
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: $green;
-  transition: width 0.5s ease;
-}
-
 .form-input__message {
   margin-top: 5px;
   margin-left: 1px;
   font-size: 12px;
   line-height: 13px;
   color: $red;
-}
-
-
-.form-input-white {
-  @extend .form-input;
-
-  .form-input__label-input-wrapper {
-    @extend .form-input__label-input-wrapper;
-  }
-
-  .form-input__label {
-    @extend .form-input__label;
-    color: white;
-    text-shadow: $base-text-shadow;
-  }
-
-  .form-input__input {
-    @extend .form-input__input;
-    color: white;
-    border-color: rgba(255, 255, 255, 0.4);
-    text-shadow: $base-text-shadow;
-  }
-
-  .form-input__input-border {
-    @extend .form-input__input-border;
-    background: white;
-  }
-
-  .form-input__message {
-    @extend .form-input__message;
-    color: black;
-  }
-}
-
-.form-input-white-active {
-  @extend .form-input-white;
-
-  .form-input__label {
-    font-size: 13px;
-    bottom: 30px;
-    transition: bottom 0.15s ease, font-size 0.15s ease;
-  }
-
-  .form-input__input-border {
-    width: 100%;
-    transition: width 0.2s ease;
-  }
-}
-
-
-.form-select {
-  @extend .form-input;
-  margin-top: 20px;
-
-  .form-select__label {
-    display: block;
-    margin-bottom: 4px;
-    color: gray;
-    font-weight: 100;
-    font-size: 13px;
-  }
-
-  .form-select__select {
-    display: inline-block;
-    background: transparent;
-    border: 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-    width: 100%;
-    padding: 100px;
-    font-size: 16px;
-    outline: none;
-  }
-
-  .form-select__message {
-    @extend .form-input__message;
-  }
 }
 
 .form-textarea {
@@ -200,29 +120,43 @@
   }
 }
 
-.px-select {
+.form-input {
   .px-select__control {
     border: 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.4);
     border-radius: 0;
+    transition: border-color 0.15s ease;
 
     &:hover {
-      border-color: rgba(0, 0, 0, 0.6);
+      border-color: rgba(0, 0, 0, 0.5);
+      transition: border-color 0.15s ease;
     }
   }
 
   .px-select__control--is-focused {
     border: 0;
-    border-bottom: 1px solid $green;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.6);
     box-shadow: 0 0 0 200px white inset;
 
     &:hover {
-      border-color: $green;
+      border-color: rgba(0, 0, 0, 0.6);
+      transition: border-color 0.15s ease;
     }
   }
 
   .px-select__value-container {
     padding: 0;
     justify-content: flex-start;
+  }
+
+  .px-select__menu {
+    z-index: 5;
+  }
+
+  &.error {
+    .px-select__control {
+      border-color: $red;
+      transition: border-color 0.15s ease;
+    }
   }
 }

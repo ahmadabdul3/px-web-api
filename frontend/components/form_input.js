@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
-export default class FormInput extends Component {
+export default class FormInput extends PureComponent {
   focused = false;
   inputRef = null;
   state = {
@@ -11,9 +11,7 @@ export default class FormInput extends Component {
     if (this.props.autoFocus) this.focusInput();
     else {
       setTimeout(() => {
-        if (this.inputRef.value) {
-          this.setState({ active: true });
-        }
+        if (this.inputRef.value) this.setState({ active: true });
       }, 200);
     }
   }
@@ -36,15 +34,15 @@ export default class FormInput extends Component {
     }
   }
 
-  setToActive = () => {
+  handleFocus = () => {
     this.setState({ active: true });
     this.focused = true;
   }
 
-  setToInactive = (e) => {
+  handleBlur = (e) => {
+    this.focused = false;
     if (!e.target.value) {
       this.setState({ active: false });
-      this.focused = false;
     }
   }
 
@@ -56,15 +54,15 @@ export default class FormInput extends Component {
     const { name, onChange } = this.props;
     const { value } = e.target;
 
-    onChange({ name, value });
+    onChange({ name, value }, e);
   }
 
   render() {
-    const { labelText, type, name, value, message, isWhite } = this.props;
+    const { labelText, type, name, value, message } = this.props;
     const { active } = this.state;
-    const classBase = isWhite ? 'form-input-white' : 'form-input';
-    let klass = classBase;
-    if (active) klass = classBase + '-active';
+    let klass = 'form-input';
+    if (active) klass += ' active';
+    if (message) klass += ' error';
 
     return (
       <div className={klass}>
@@ -78,10 +76,9 @@ export default class FormInput extends Component {
             value={value}
             type={type}
             className='form-input__input'
-            onFocus={this.setToActive}
-            onBlur={this.setToInactive}
+            onFocus={this.handleFocus}
+            onBlur={this.handleBlur}
             onChange={this.onChange} />
-          <div className='form-input__input-border' />
         </div>
         <footer className='form-input__message'>
            { message }

@@ -7,20 +7,15 @@ export default class MultiStepForm extends PureComponent {
 
   nextPage = () => {
     const numOfPages = this.props.pages.length;
-    console.log(numOfPages);
     let pageNumber = this.state.pageNumber + 1;
     if (pageNumber > numOfPages) pageNumber = numOfPages;
-    console.log(this.state.pageNumber);
-    console.log(pageNumber);
     this.setState({ pageNumber });
   }
 
   prevPage = () => {
     const numOfPages = this.props.pages.length;
-    console.log(numOfPages);
     let pageNumber = this.state.pageNumber - 1;
     if (pageNumber < 1) pageNumber = 1;
-    console.log(pageNumber);
     this.setState({ pageNumber });
   }
 
@@ -44,18 +39,10 @@ export default class MultiStepForm extends PureComponent {
           { markup }
         </div>
         <div className='multi-step-form__navigation'>
-          <button
-            className='button'
-            type='button'
-            onClick={this.prevPage}
-          >
+          <button className='button' type='button' onClick={this.prevPage}>
             PREV
           </button>
-          <button
-            className='button'
-            type='button'
-            onClick={this.nextPage}
-          >
+          <button className='button' type='button' onClick={this.nextPage}>
             NEXT
           </button>
         </div>

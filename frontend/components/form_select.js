@@ -2,9 +2,43 @@ import React, { PureComponent } from 'react';
 import Select from 'react-select/lib/Creatable';
 
 export default class FormSelect extends PureComponent {
+  selectRef = null;
+  focused = false;
   state = {
-    createdOptions: [],
+    active: false,
   };
+
+  componentDidMount() {
+    setTimeout(() => {
+      if (this.props.value) this.setState({ active: true });
+    }, 200);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.value !== this.props.value) {
+      if (!this.focused) {
+        this.setState({
+          active: !!this.props.value,
+        });
+      }
+    }
+  }
+
+  handleFocus = () => {
+    this.setState({ active: true });
+    this.focused = true;
+  }
+
+  handleBlur = () => {
+    this.focused = false;
+    if (!this.props.value) {
+      this.setState({ active: false });
+    }
+  }
+
+  focusSelect = () => {
+    this.selectRef.focus();
+  }
 
   onChange = ({ value }) => {
     const { name, onChange } = this.props;
@@ -12,19 +46,34 @@ export default class FormSelect extends PureComponent {
   };
 
   render() {
-    const { onChange, options, placeholder, message  } = this.props;
-    const { createdOptions } = this.state;
+    const {
+      onChange, options, labelText, message, value, autoFocus
+    } = this.props;
+    const { active } = this.state;
+    let klass = 'form-input';
+    if (active) klass += ' active';
+    if (message) klass += ' error';
 
     return (
-      <div className='form-input'>
-        <Select
-          className='px-select'
-          classNamePrefix='px-select'
-          placeholder={placeholder}
-          onChange={this.onChange}
-          options={options}
-          formatCreateLabel={val => `Custom value: '${val}'`}
-        />
+      <div className={klass}>
+        <div className='form-input__label-input-wrapper'>
+          <label className='form-input__label' onClick={this.focusSelect}>
+            { labelText }
+          </label>
+          <Select
+            ref={(select) => { this.selectRef = select; }}
+            className='px-select'
+            classNamePrefix='px-select'
+            placeholder=''
+            openMenuOnFocus
+            onChange={this.onChange}
+            options={options}
+            autoFocus={autoFocus}
+            onFocus={this.handleFocus}
+            onBlur={this.handleBlur}
+            formatCreateLabel={val => `Custom value: '${val}'`}
+          />
+        </div>
         <footer className='form-input__message'>
           { message }
         </footer>
