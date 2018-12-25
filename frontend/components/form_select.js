@@ -4,9 +4,15 @@ import Select from 'react-select/lib/Creatable';
 export default class FormSelect extends PureComponent {
   selectRef = null;
   focused = false;
-  state = {
-    active: false,
-  };
+  options = this.optionsAsObject;
+  state = { active: false };
+
+  get optionsAsObject() {
+    return this.props.options.reduce((all, option) => {
+      all[option.value] = option;
+      return all;
+    }, {});
+  }
 
   componentDidMount() {
     setTimeout(() => {
@@ -40,14 +46,25 @@ export default class FormSelect extends PureComponent {
     this.selectRef.focus();
   }
 
-  onChange = ({ value }) => {
+  onChange = (option) => {
+    const value = option && option.value;
     const { name, onChange } = this.props;
     onChange({ value, name });
   };
 
+  onCreateOption = (value) => {
+    const { name, onChange } = this.props;
+    this.options[value] = { value, label: value };
+    onChange({ value, name });
+  }
+
+  get value() {
+    return this.options[this.props.value] || '';
+  }
+
   render() {
     const {
-      onChange, options, labelText, message, value, autoFocus
+      onChange, options, labelText, message, autoFocus
     } = this.props;
     const { active } = this.state;
     let klass = 'form-input';
@@ -65,8 +82,11 @@ export default class FormSelect extends PureComponent {
             className='px-select'
             classNamePrefix='px-select'
             placeholder=''
+            isClearable
+            value={this.value}
             openMenuOnFocus
             onChange={this.onChange}
+            onCreateOption={this.onCreateOption}
             options={options}
             autoFocus={autoFocus}
             onFocus={this.handleFocus}
@@ -84,7 +104,7 @@ export default class FormSelect extends PureComponent {
 
 export class FormSelectState extends PureComponent {
   render() {
-    const { onChange, message, isRequired, name } = this.props;
+    const { onChange, message, isRequired, name, value } = this.props;
     let placeholder = 'State';
     if (isRequired) placeholder += '*';
 
@@ -92,6 +112,8 @@ export class FormSelectState extends PureComponent {
       <FormSelect
         placeholder={placeholder}
         name={name}
+        labelText='State*'
+        value={value}
         message={message}
         onChange={onChange}
         options={getStateOptions()}
@@ -163,7 +185,6 @@ function getStateOptions() {
     { value: 'WY', label: 'Wyoming' },
   ].map(option => {
     const { label } = option;
-    const value = label.toLowerCase();
-    return { label, value };
+    return { label, value: label };
   });
 }

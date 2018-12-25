@@ -41,14 +41,16 @@ router.post('/politicians', (req, res) => {
     titlePrimary
   } = req.body;
 
+  console.log('body', req.body);
+
   models.politician.findAll({
     include: [{
       model: models.officeHolderTerm,
       required: true,
       where: {
-        levelOfResponsibility,
-        areaOfResponsibility,
-        titlePrimary,
+        levelOfResponsibility: { ilike: levelOfResponsibility },
+        areaOfResponsibility: { ilike: areaOfResponsibility },
+        titlePrimary: { ilike: titlePrimary },
       },
       include: [{
         model: models.contactInfo,
@@ -60,27 +62,28 @@ router.post('/politicians', (req, res) => {
       }],
     }],
   }).then(r => {
-    if (r.length > 0) {
-      const politicians = r.map((p, i) => {
-        const politician = p.get({ plain: true });
-        const officeHolderTerm = politician.officeHolderTerms[0];
-        const contactInfo = officeHolderTerm.contactInfos[0];
-
-        return prepPoliticianModelForUi({
-          ...politician,
-          ...officeHolderTerm,
-          ...contactInfo,
-          id: politician.id,
-        });
-      });
-      res.status(409).json({
-        status: 'fail',
-        message: "There's already an office holder for that position",
-        data: politicians,
-      });
-    } else {
+    if (r.length < 1) {
       res.json({ status: 'success', message: 'created successfully' });
+      return;
     }
+
+    const politicians = r.map((p, i) => {
+      const politician = p.get({ plain: true });
+      const officeHolderTerm = politician.officeHolderTerms[0];
+      const contactInfo = officeHolderTerm.contactInfos[0];
+
+      return prepPoliticianModelForUi({
+        ...politician,
+        ...officeHolderTerm,
+        ...contactInfo,
+        id: politician.id,
+      });
+    });
+    res.status(409).json({
+      status: 'fail',
+      message: "There's already an office holder for that position",
+      data: politicians,
+    });
   }).catch(err => {
     res.json({ status: 'fail', message: err });
   });
@@ -215,3 +218,19 @@ module.exports = router;
   //  "ocdId": "ocd-division/country:us/state:ct/place:new_haven/ward:1",
   //  "name": "New Haven CT ward 1"
   // },
+
+  //
+  // committee = {
+  //
+  // }
+  //
+  // politician = {
+  //   committeeId <- depends on them holding officeHolderTerm
+  //
+  // }
+  //
+  // committeeTitle = {
+  //   committeeId
+  //   officeHolderTermId
+  //
+  // }

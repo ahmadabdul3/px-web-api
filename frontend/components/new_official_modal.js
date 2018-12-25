@@ -50,11 +50,12 @@ export default class NewOfficialModal extends PureComponent {
   state = newOfficialModalInitialState();
 
   onSubmit = (e) => {
-    console.log(this.state);
+    // console.log(this.state);
     e.preventDefault();
     this.setState({ formMessage: '' });
     try {
       this.validateInputs();
+      const values = { ...this.state, areaOfResponsibility: 1 };
       http.post('/politicians', officialModel(this.state)).then(res => {
         this.setState({
           ...newOfficialModalInitialState(),
@@ -113,7 +114,6 @@ export default class NewOfficialModal extends PureComponent {
 
   render() {
     const { hideModal } = this.props;
-    console.log(this.state);
 
     return (
       <div>
@@ -175,9 +175,8 @@ export default class NewOfficialModal extends PureComponent {
                   onChange={this.onChange}
                   message={this.state.partyMessage}
                   options={[
-                    { value: '', label: 'Party', isDisabled: true },
-                    { value: 'democratic', label: 'Democratic' },
-                    { value: 'republican', label: 'Republican' },
+                    { value: 'Democrat', label: 'Democrat' },
+                    { value: 'Republican', label: 'Republican' },
                   ]}
                 />
                 <FormSelect
@@ -187,9 +186,8 @@ export default class NewOfficialModal extends PureComponent {
                   onChange={this.onChange}
                   message={this.state.titlePrimaryMessage}
                   options={[
-                    { value: '', label: 'Primary Title', isDisabled: true },
-                    { value: 'alder', label: 'Alder' },
-                    { value: 'mayor', label: 'Mayor' },
+                    { value: 'Alder', label: 'Alder' },
+                    { value: 'Mayor', label: 'Mayor' },
                   ]}
                 />
                 <FormInput
@@ -206,10 +204,9 @@ export default class NewOfficialModal extends PureComponent {
                   onChange={this.onChange}
                   message={this.state.levelOfResponsibilityMessage}
                   options={[
-                    { value: '', label: 'Level of Responsibility', isDisabled: true },
-                    { value: 'district', label: 'District' },
-                    { value: 'city', label: 'City' },
-                    { value: 'state', label: 'State' },
+                    { value: 'District', label: 'District' },
+                    { value: 'City', label: 'City' },
+                    { value: 'State', label: 'State' },
                   ]}
                 />
                 <FormSelect
@@ -219,9 +216,8 @@ export default class NewOfficialModal extends PureComponent {
                   onChange={this.onChange}
                   message={this.state.areaOfResponsibilityMessage}
                   options={[
-                    { value: '', label: 'Area of Responsibility', isDisabled: true },
-                    { value: 'new haven', label: 'New Haven' },
-                    { value: 'connecticut', label: 'Connecticut' },
+                    { value: 'New Haven', label: 'New Haven' },
+                    { value: 'Connecticut', label: 'Connecticut' },
                   ]}
                 />
               </div>
@@ -240,7 +236,7 @@ export default class NewOfficialModal extends PureComponent {
                   labelText='Address'
                   onChange={this.onChange}
                   name='streetAddress'
-                  value={this.state.address}
+                  value={this.state.streetAddress}
                   message={this.state.streetAddressMessage}
                 />
                 <FormSelect
@@ -249,10 +245,7 @@ export default class NewOfficialModal extends PureComponent {
                   value={this.state.city}
                   onChange={this.onChange}
                   message={this.state.cityMessage}
-                  options={[
-                    { value: '', label: 'City', isDisabled: true },
-                    { value: 'new haven', label: 'New Haven' },
-                  ]}
+                  options={[ { value: 'New Haven', label: 'New Haven' } ]}
                 />
                 <FormSelectState
                   isRequired
