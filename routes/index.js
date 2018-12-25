@@ -47,18 +47,11 @@ router.post('/politicians', (req, res) => {
     include: [{
       model: models.officeHolderTerm,
       required: true,
-      where: {
-        levelOfResponsibility: { ilike: levelOfResponsibility },
-        areaOfResponsibility: { ilike: areaOfResponsibility },
-        titlePrimary: { ilike: titlePrimary },
-      },
+      where: { levelOfResponsibility, areaOfResponsibility, titlePrimary },
       include: [{
         model: models.contactInfo,
         required: true,
-        where: {
-          city: { ilike: city },
-          state: { ilike: state },
-        },
+        where: { city, state },
       }],
     }],
   }).then(r => {
