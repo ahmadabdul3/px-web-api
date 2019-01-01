@@ -18,6 +18,7 @@ export function validateRequiredFields({
 
   const errors = requiredFields.reduce((errors, field) => {
     const value = state[field];
+
     if (!value) {
       isValid = false;
       errors[field + 'Message'] = 'This field is required';

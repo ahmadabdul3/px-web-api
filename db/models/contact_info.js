@@ -8,9 +8,11 @@ module.exports = (sequelize, DataTypes) => {
     state: DataTypes.TEXT,
     zipCode: DataTypes.TEXT
   }, {});
+  
   contactInfo.associate = function(models) {
     contactInfo.belongsTo(models.politician);
     contactInfo.belongsTo(models.officeHolderTerm);
   };
+
   return contactInfo;
 };

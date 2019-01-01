@@ -3,6 +3,7 @@ import appRoutes from 'src/constants/routes';
 import { NavLink } from 'react-router-dom';
 import NewOfficialModal from 'src/frontend/components/new_official_modal';
 import http from 'src/frontend/services/http';
+import PoliticianSummaryCard from 'src/frontend/components/politician_summary_card';
 
 export default class HomePage extends Component {
   state = {
@@ -11,7 +12,6 @@ export default class HomePage extends Component {
     address: '',
     politicians: [],
     error: '',
-    // noteDocs: [],
   }
 
   componentDidMount() {
@@ -96,58 +96,8 @@ export default class HomePage extends Component {
 }
 
 function renderPoliticians(politicians) {
-  if (politicians.length < 1) return (<div>Loading data</div>);
-  return politicians.map(p => {
-    return (
-      <div key={p.id} className='card'>
-        <div className='name'>
-          <span>
-            { p.firstName }
-          </span> <span>
-            { p.middleName }
-          </span> <span>
-            { p.lastName }
-          </span> <span>
-            { p.suffix }
-          </span>
-        </div>
-        <div>
-          <span>
-            { p.levelOfResponsibility }
-          </span> <span>
-            { p.areaOfResponsibility },
-          </span> <span>
-            { p.titlePrimary } -
-          </span> <span>
-            { p.party }
-          </span>
-        </div>
-        <div className='contact-info'>
-          { renderContactInfo(p) }
-        </div>
-      </div>
-    )
-  });
-}
-
-function renderContactInfo(p) {
-  const contactInfoKeys = [
-    'email',
-    'phone',
-    'streetAddress',
-    'city',
-    'state',
-    'zipCode',
-  ];
-  return Object.keys(p).map((key, i) => {
-    if (!contactInfoKeys.includes(key)) return;
-    return (
-      <div key={p.id + key}>
-        <span className='key'>{key}</span>
-        <span>{p[key]}</span>
-      </div>
-    );
-  });
+  if (politicians.length < 1) return (<div>No Data</div>);
+  return politicians.map(p => <PoliticianSummaryCard politician={p} key={p.id} />);
 }
 
 

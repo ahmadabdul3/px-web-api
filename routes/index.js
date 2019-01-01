@@ -1,86 +1,11 @@
 import express from 'express';
 import path from 'path';
-const router = express.Router();
 import models from 'src/db/models';
 import fetch from 'node-fetch';
-import prepPoliticianModelForUi from 'src/services/ui_data_prep/ui_data_prepper_politician';
+import politicanRoutes from './politicians';
 
-router.get('/politicians', (req, res) => {
-  models.politician.findAll({
-    include: [{
-      model: models.officeHolderTerm,
-      include: [{
-        model: models.contactInfo
-      }],
-    }]
-  }).then(r => {
-    const politicians = r.map((p, i) => {
-      const politician = p.get({ plain: true });
-      const officeHolderTerm = politician.officeHolderTerms[0];
-      const contactInfo = officeHolderTerm.contactInfos[0];
-
-      return prepPoliticianModelForUi({
-        ...politician,
-        ...officeHolderTerm,
-        ...contactInfo,
-        id: politician.id,
-      });
-    });
-    res.json({ status: 'success', politicians });
-  }).catch(err => {
-    res.json({ status: 'fail', err });
-  });
-});
-
-router.post('/politicians', (req, res) => {
-  const {
-    levelOfResponsibility,
-    areaOfResponsibility,
-    city,
-    state,
-    titlePrimary
-  } = req.body;
-
-  console.log('body', req.body);
-
-  models.politician.findAll({
-    include: [{
-      model: models.officeHolderTerm,
-      required: true,
-      where: { levelOfResponsibility, areaOfResponsibility, titlePrimary },
-      include: [{
-        model: models.contactInfo,
-        required: true,
-        where: { city, state },
-      }],
-    }],
-  }).then(r => {
-    if (r.length < 1) {
-      res.json({ status: 'success', message: 'created successfully' });
-      return;
-    }
-
-    const politicians = r.map((p, i) => {
-      const politician = p.get({ plain: true });
-      const officeHolderTerm = politician.officeHolderTerms[0];
-      const contactInfo = officeHolderTerm.contactInfos[0];
-
-      return prepPoliticianModelForUi({
-        ...politician,
-        ...officeHolderTerm,
-        ...contactInfo,
-        id: politician.id,
-      });
-    });
-    res.status(409).json({
-      status: 'fail',
-      message: "There's already an office holder for that position",
-      data: politicians,
-    });
-  }).catch(err => {
-    res.json({ status: 'fail', message: err });
-  });
-});
+const router = express.Router();
+router.use('/', politicanRoutes);
 
 router.post('/alders', (req, res) => {
   models.official.create(req.body).then((sqlRes) => {
@@ -226,4 +151,24 @@ module.exports = router;
   //   committeeId
   //   officeHolderTermId
   //
+  // }
+
+  // committee = {
+  //   // - static list of committees
+  // }
+
+  // committee_x_officeHolderTerm = {
+  //   // - join table between office holder term and committee
+  //   //   because an office holder term can have many committees
+  //   // - possibly have the politicianId here? maybe a person can stay
+  //   //   in a committee even if they're not in office?
+  //   // - so I guess it's an 'either/or' if there's an office holder term,
+  //   //   that means the politician was holding office while in committee,
+  //   //   if theres a politicianId, that means politician was not in office
+  //   //   while in committee
+  //   // - also, we use either the politicianID or the officeHolderTermId
+  //   //   to find the politician, depending on which exists
+  //   officeHolderTermId,
+  //   committeeId,
+  //   title: ['Chair', 'Vice-Chair'],
   // }

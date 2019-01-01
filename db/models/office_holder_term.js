@@ -7,9 +7,12 @@ module.exports = (sequelize, DataTypes) => {
     levelOfResponsibility: DataTypes.TEXT,
     areaOfResponsibility: DataTypes.TEXT
   }, {});
+
   officeHolderTerm.associate = function(models) {
     officeHolderTerm.belongsTo(models.politician);
     officeHolderTerm.hasMany(models.contactInfo);
+    officeHolderTerm.hasMany(models.committeeTerm);
   };
+
   return officeHolderTerm;
 };

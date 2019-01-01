@@ -7,6 +7,8 @@ import politician from './politician';
 import officeHolderTerm from './office_holder_term';
 import candidateTerm from './candidate_term';
 import contactInfo from './contact_info';
+import committee from './committee';
+import committeeTerm from './committee_term';
 
 const modelInitializers = [
   official,
@@ -14,6 +16,8 @@ const modelInitializers = [
   officeHolderTerm,
   candidateTerm,
   contactInfo,
+  committee,
+  committeeTerm,
 ];
 const sequelize = initializeDatabase();
 const models = initializeModels();
