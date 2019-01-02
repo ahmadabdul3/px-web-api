@@ -12,7 +12,6 @@ const invalidUiKeys = {
   politicianId: true,
   officeHolderTerms: true,
   contactInfos: true,
-  officeHolderTermId: true,
 };
 
 function keyIsValidForUi(key) { return !invalidUiKeys[key]; }

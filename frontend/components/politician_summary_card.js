@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 
 export default class PoliticianSummaryCard extends PureComponent {
   render() {
-    const { politician } = this.props;
+    const { politician, manageCommittees } = this.props;
 
     return (
       <div key={politician.id} className='card'>
@@ -30,6 +30,11 @@ export default class PoliticianSummaryCard extends PureComponent {
         </div>
         <div className='contact-info'>
           <ContactInfo politician={politician} />
+        </div>
+        <div className='buttons'>
+          <button className='button' onClick={() => { manageCommittees(politician); }}>
+            manage committees
+          </button>
         </div>
       </div>
     );

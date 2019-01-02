@@ -72,6 +72,13 @@
   margin-bottom: 50px;
 }
 
+.form-subtitle {
+  font-size: 16px;
+  text-align: left;
+  margin-top: -35px;
+  margin-bottom: 50px;
+}
+
 .form-columns {
   display: flex;
   justify-content: space-between;
@@ -104,17 +111,36 @@
   z-index: 995;
 }
 
-.new-official-modal {
+.modal {
   text-align: left;
-  width: 1000px;
   border-radius: 3px;
   background: white;
   position: fixed;
   z-index: 1000;
   top: 50px;
-  left: calc(50% - 500px);
-  // overflow: hidden;
   box-shadow: 0 10px 50px 0 rgba(black, 0.5);
+}
+
+.modal__title {
+  padding: 80px 40px 25px;
+  box-sizing: border-box;
+  font-size: 22px;
+  font-weight: 100;
+  background-color: $red;
+  color: white;
+  text-shadow: 0 1px 2px rgba(black, 0.4);
+}
+
+.modal__form {
+  padding: 20px 60px 40px;
+  box-sizing: border-box;
+  margin-top: 40px;
+}
+
+.new-official-modal {
+  @extend .modal;
+  width: 1000px;
+  left: calc(50% - 500px);
 
   h2 {
     padding: 80px 40px 25px;
@@ -125,12 +151,20 @@
     color: white;
     text-shadow: 0 1px 2px rgba(black, 0.4);
   }
+}
 
-  form {
-    padding: 20px 60px 40px;
-    box-sizing: border-box;
-    margin-top: 40px;
-  }
+.committee-management-modal {
+  @extend .modal;
+  width: 500px;
+  left: calc(50% - 250px);
+}
+
+.new-committee-term-form {
+  margin-top: 20px;
+  box-sizing: border-box;
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
 
 .form-messages {
@@ -167,6 +201,21 @@
 
   .contact-info {
     margin-top: 10px;
+  }
+
+  .buttons {
+    text-align: center;
+    border-top: 1px solid #ddd;
+    margin-top: 20px;
+    padding-top: 20px;
+
+    .button {
+      margin-right: 10px;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
   }
 }
 

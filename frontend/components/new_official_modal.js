@@ -55,7 +55,6 @@ export default class NewOfficialModal extends PureComponent {
     this.setState({ formMessage: '' });
     try {
       this.validateInputs();
-      const values = { ...this.state, areaOfResponsibility: 1 };
       http.post('/politicians', officialModel(this.state)).then(res => {
         this.setState({
           ...newOfficialModalInitialState(),
@@ -84,12 +83,7 @@ export default class NewOfficialModal extends PureComponent {
     const dataSanityResult = this.validateDataSanity();
     if (!dataSanityResult.isValid) formValid = false;
 
-    if (!formValid) {
-      throw {
-        ...requiredFieldsResult.errors,
-        ...dataSanityResult.errors,
-      };
-    }
+    if (!formValid) throw { ...requiredFieldsResult.errors, ...dataSanityResult.errors };
   }
 
   validateDataSanity() {
@@ -119,7 +113,7 @@ export default class NewOfficialModal extends PureComponent {
       <div>
         <div className='black-overlay' onClick={hideModal} />
         <div className='new-official-modal'>
-          <form onSubmit={this.onSubmit}>
+          <form className='modal__form' onSubmit={this.onSubmit}>
             <div className='form-title'>
               Create a New Official
             </div>

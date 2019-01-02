@@ -51,6 +51,8 @@ module.exports = (sequelize, DataTypes) => {
       ...officeHolderTerm,
       ...contactInfo,
       id: pol.id,
+      officeHolderTermId: officeHolderTerm.id,
+      contactInfoId: contactInfo.id,
     });
   }
 
