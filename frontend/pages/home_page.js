@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom';
 import NewOfficialModal from 'src/frontend/components/new_official_modal';
 import http from 'src/frontend/services/http';
 import PoliticianSummaryCard from 'src/frontend/components/politician_summary_card';
+import FormInput from 'src/frontend/components/form_input';
 
 import {
   generateValidationStateForForm,
@@ -21,6 +22,7 @@ export default class HomePage extends Component {
     committees: {},
     error: '',
     politicianForNewCommitteeTerm: undefined,
+    headerFilter: '',
   }
 
   componentDidMount() {
@@ -114,11 +116,21 @@ export default class HomePage extends Component {
 
   renderPoliticians() {
     const { politicians, committees } = this.state;
+    const headerFilter = this.state.headerFilter.toLowerCase();
     if (politicians.length < 1) return (<div>No Data</div>);
 
     return Object.keys(politicians).map(politicianId => {
       const p = politicians[politicianId];
       const c = committees[politicianId];
+
+      if (headerFilter) {
+        const fullName = `${p.firstName} ${p.middleName} ${p.lastName} ${p.suffix}`.toLowerCase();
+        const politicalTitle = `${p.titlePrimary} ${p.levelOfResponsibility} ${p.areaOfResponsibility} ${p.party}`.toLowerCase();
+
+        if (!fullName.includes(headerFilter) && !politicalTitle.includes(headerFilter)) {
+          return;
+        }
+      }
 
       return (
         <PoliticianSummaryCard
@@ -131,13 +143,18 @@ export default class HomePage extends Component {
     });
   }
 
+  changeHeaderFilter = ({ name, value }) => {
+    this.setState({ [name]: value });
+  }
+
   render() {
     const {
       address,
       data,
       newOfficialModalOpen,
       newCommitteeTermModalOpen,
-      politicianForNewCommitteeTerm
+      politicianForNewCommitteeTerm,
+      headerFilter,
     } = this.state;
 
     return (
@@ -158,6 +175,15 @@ export default class HomePage extends Component {
         }
         <header className='home-page__header'>
           <div className='content'>
+            <div></div>
+            <div className='center'>
+              <FormInput
+                name='headerFilter'
+                labelText='Filter'
+                onChange={this.changeHeaderFilter}
+                value={headerFilter}
+              />
+            </div>
             <button className='green-button' onClick={this.openNewOfficialModal}>
               <i className='fas fa-plus' /> New Official
             </button>
