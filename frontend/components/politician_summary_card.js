@@ -2,42 +2,56 @@ import React, { PureComponent } from 'react';
 
 export default class PoliticianSummaryCard extends PureComponent {
   render() {
-    const { politician, manageCommittees } = this.props;
+    const { politician, addCommitteeTerm, committees } = this.props;
+    const {
+      firstName,
+      middleName,
+      lastName,
+      suffix,
+      levelOfResponsibility,
+      areaOfResponsibility,
+      titlePrimary,
+      party
+    } = politician;
+    const fullName = `${firstName} ${middleName} ${lastName}, ${suffix}`;
+    const politicalTitle = `${titlePrimary}, ${levelOfResponsibility} ${areaOfResponsibility} - ${party}`;
 
     return (
       <div key={politician.id} className='card'>
         <div className='name'>
-          <span>
-            { politician.firstName }
-          </span> <span>
-            { politician.middleName }
-          </span> <span>
-            { politician.lastName }
-          </span> <span>
-            { politician.suffix }
-          </span>
+          { fullName }
         </div>
         <div>
-          <span>
-            { politician.levelOfResponsibility }
-          </span> <span>
-            { politician.areaOfResponsibility },
-          </span> <span>
-            { politician.titlePrimary } -
-          </span> <span>
-            { politician.party }
-          </span>
+          { politicalTitle }
         </div>
         <div className='contact-info'>
           <ContactInfo politician={politician} />
         </div>
-        <div className='buttons'>
-          <button className='button' onClick={() => { manageCommittees(politician); }}>
-            manage committees
+        <div className='committees'>
+          {
+            committees.map((c, i) => <Committee key={c.committeeTermId} committee={c} />)
+          }
+          <button className='button' onClick={() => { addCommitteeTerm(politician); }}>
+            add committee
           </button>
         </div>
       </div>
     );
+  }
+}
+
+class Committee extends PureComponent {
+  render() {
+    const { committee } = this.props;
+
+    return (
+      <div className='committee-row'>
+          { committee.committeeName }
+          {
+            committee.committeeTermTitle ? ` --- (${committee.committeeTermTitle})` : ''
+          }
+      </div>
+    )
   }
 }
 

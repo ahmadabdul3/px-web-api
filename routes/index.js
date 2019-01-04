@@ -3,9 +3,11 @@ import path from 'path';
 import models from 'src/db/models';
 import fetch from 'node-fetch';
 import politicanRoutes from './politicians';
+import committeeTermRoutes from './committee_terms';
 
 const router = express.Router();
-router.use('/', politicanRoutes);
+router.use('/politicians', politicanRoutes);
+router.use('/committee-terms', committeeTermRoutes);
 
 router.post('/alders', (req, res) => {
   models.official.create(req.body).then((sqlRes) => {

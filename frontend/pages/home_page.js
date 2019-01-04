@@ -15,19 +15,33 @@ export default class HomePage extends Component {
   state = {
     loading: false,
     newOfficialModalOpen: false,
-    committeeManagementModalOpen: false,
+    newCommitteeTermModalOpen: false,
     address: '',
-    politicians: [],
+    politicians: {},
+    committees: {},
     error: '',
-    politicianForCommitteeManagement: undefined,
+    politicianForNewCommitteeTerm: undefined,
   }
 
   componentDidMount() {
     http.get('/politicians').then(res => {
-      this.setState({ politicians: res.politicians, error: '' });
+      const { politicians, committees } = this.getPoliticiansAndCommittees(res.politicians);
+      this.setState({ politicians, committees, error: '' });
     }).catch(err => {
       this.setState({ error: 'error' });
     });
+  }
+
+  getPoliticiansAndCommittees(rawPoliticians) {
+    const committees = {};
+    const politicians = {};
+
+    rawPoliticians.forEach(p => {
+      politicians[p.id] = p;
+      committees[p.id] = p.committees;
+    });
+
+    return { committees, politicians };
   }
 
   addNoteDoc = ({ docName }) => {
@@ -43,17 +57,29 @@ export default class HomePage extends Component {
     this.setState({ newOfficialModalOpen: false });
   }
 
-  openCommitteeManagementModal = (politicianForCommitteeManagement) => {
+  saveNewCommitteeTerm = (newCommitteeTerm) => {
+    const { committees, politicianForNewCommitteeTerm } = this.state;
+    const politicianId = politicianForNewCommitteeTerm.id;
+    const committeesForPolitician = [ ...committees[politicianId], newCommitteeTerm ];
+
     this.setState({
-      politicianForCommitteeManagement,
-      committeeManagementModalOpen: true,
+      committees: { ...committees, [politicianId]: committeesForPolitician },
+      politicianForNewCommitteeTerm: undefined,
+      newCommitteeTermModalOpen: false,
     });
   }
 
-  closeCommitteeManagementModal = () => {
+  openNewCommitteeTermModal = (politicianForNewCommitteeTerm) => {
     this.setState({
-      politicianForCommitteeManagement: undefined,
-      committeeManagementModalOpen: false,
+      politicianForNewCommitteeTerm,
+      newCommitteeTermModalOpen: true,
+    });
+  }
+
+  closeNewCommitteeTermModal = () => {
+    this.setState({
+      politicianForNewCommitteeTerm: undefined,
+      newCommitteeTermModalOpen: false,
     });
   }
 
@@ -87,15 +113,22 @@ export default class HomePage extends Component {
   }
 
   renderPoliticians() {
-    const { politicians } = this.state;
+    const { politicians, committees } = this.state;
     if (politicians.length < 1) return (<div>No Data</div>);
-    return politicians.map(p => (
-      <PoliticianSummaryCard
-        politician={p}
-        key={p.id}
-        manageCommittees={this.openCommitteeManagementModal}
-      />
-    ));
+
+    return Object.keys(politicians).map(politicianId => {
+      const p = politicians[politicianId];
+      const c = committees[politicianId];
+
+      return (
+        <PoliticianSummaryCard
+          politician={p}
+          committees={c}
+          key={p.id}
+          addCommitteeTerm={this.openNewCommitteeTermModal}
+        />
+      );
+    });
   }
 
   render() {
@@ -103,8 +136,8 @@ export default class HomePage extends Component {
       address,
       data,
       newOfficialModalOpen,
-      committeeManagementModalOpen,
-      politicianForCommitteeManagement
+      newCommitteeTermModalOpen,
+      politicianForNewCommitteeTerm
     } = this.state;
 
     return (
@@ -115,10 +148,11 @@ export default class HomePage extends Component {
           )
         }
         {
-          committeeManagementModalOpen && (
-            <CommitteeManagementModal
-              hideModal={this.closeCommitteeManagementModal}
-              politician={politicianForCommitteeManagement}
+          newCommitteeTermModalOpen && (
+            <NewCommitteeTermModal
+              hideModal={this.closeNewCommitteeTermModal}
+              politician={politicianForNewCommitteeTerm}
+              saveNewCommitteeTerm={this.saveNewCommitteeTerm}
             />
           )
         }
@@ -143,22 +177,9 @@ export default class HomePage extends Component {
   }
 }
 
-class CommitteeManagementModal extends PureComponent {
-  state = {
-    newCommitteeTermFormOpen: false,
-  };
-
-  openNewCommitteeTermForm = () => {
-    this.setState({ newCommitteeTermFormOpen: true });
-  };
-
-  closeNewCommitteeTermForm = () => {
-    this.setState({ newCommitteeTermFormOpen: false });
-  };
-
+class NewCommitteeTermModal extends PureComponent {
   render() {
-    const { newCommitteeTermFormOpen } = this.state;
-    const { hideModal, politician } = this.props;
+    const { hideModal, politician, saveNewCommitteeTerm } = this.props;
     const {
       committees,
       firstName,
@@ -177,44 +198,16 @@ class CommitteeManagementModal extends PureComponent {
         <div className='committee-management-modal'>
           <div className='modal__form'>
             <div className='form-title'>
-              Manage Committees
+              Add To Committee
             </div>
             <div className='form-subtitle'>
-                { politicianFullName } - { politicianTitle }
+              { politicianFullName } - { politicianTitle }
             </div>
-            <div className='committee-list'>
-              {
-                committees ? (
-                  committees.map((c, i) => <Committee key={i} committee={c} />)
-                ) : (
-                  <div>
-                    { politicianFullName } is not part of any committee
-                  </div>
-                )
-              }
-            </div>
-            {
-              newCommitteeTermFormOpen ? (
-                <NewCommitteeTermForm
-                  closeNewCommitteeTermForm={this.closeNewCommitteeTermForm}
-                  officeHolderTermId={politician.officeHolderTermId}
-                />
-              ) : null
-            }
-            {
-              newCommitteeTermFormOpen ?
-              null
-              : (
-                <div className='form-buttons'>
-                  <button
-                    className='button'
-                    onClick={this.openNewCommitteeTermForm}
-                  >
-                    add committee
-                  </button>
-                </div>
-              )
-            }
+            <NewCommitteeTermForm
+              closeNewCommitteeTermForm={hideModal}
+              saveNewCommitteeTerm={saveNewCommitteeTerm}
+              officeHolderTermId={politician.officeHolderTermId}
+            />
           </div>
         </div>
       </div>
@@ -247,19 +240,35 @@ class NewCommitteeTermForm extends PureComponent {
   static requiredFields = ['committeeId'];
   state = newCommitteeTermFormState();
 
+  get splitCommitteeValues() {
+    const [committeeName, committeeId] = this.state.committeeId.split('**');
+    return { committeeId, committeeName };
+  }
+
   onSubmit = (e) => {
-    // console.log(this.state);
-    const { officeHolderTermId } = this.props;
+    const { officeHolderTermId, saveNewCommitteeTerm } = this.props;
     e.preventDefault();
-    this.setState({ formMessage: '' });
-    try {
-      this.validateInputs();
-      const values = committeeTermModel({ ...this.state, officeHolderTermId });
-      console.log('values on submit', values);
-    } catch (errors) {
-      console.error(errors);
-      this.setState({ ...errors });
-    }
+    const validationResult = this.validateInputs();
+    validationResult.formMessage = '';
+    this.setState(validationResult);
+    if (!validationResult.formValid) return;
+
+    const values = committeeTermModel({
+      ...this.state, ...this.splitCommitteeValues, officeHolderTermId
+    });
+    http.post('/committee-terms', values).then(res => {
+      saveNewCommitteeTerm({
+        committeeTermId: res.committeeTerm.id,
+        committeeTermTitle: res.committeeTerm.title,
+        committeeId: res.committeeTerm.committeeId,
+        committeeName: this.splitCommitteeValues.committeeName,
+      });
+    }).catch(err => {
+      const errorMessage = err.errors && err.errors[0] && err.errors[0].message || 'There was an error';
+      this.setState({ formMessage: errorMessage });
+      console.warn(err);
+    });
+
   }
 
   validateInputs() {
@@ -267,7 +276,7 @@ class NewCommitteeTermForm extends PureComponent {
     const { state } = this;
 
     const requiredFieldsResult = validateRequiredFields({ requiredFields, state });
-    if (!requiredFieldsResult.isValid) throw requiredFieldsResult.errors;
+    return { formValid: requiredFieldsResult.isValid, ...requiredFieldsResult.errors };
   }
 
   onChange = ({ name, value }) => {
@@ -276,7 +285,8 @@ class NewCommitteeTermForm extends PureComponent {
 
   render() {
     const { closeNewCommitteeTermForm } = this.props;
-    console.log(this.props);
+    const { formMessage } = this.state;
+
     return (
       <form className='new-committee-term-form' onSubmit={this.onSubmit}>
         <FormSelect
@@ -298,6 +308,9 @@ class NewCommitteeTermForm extends PureComponent {
             { value: 'Vice-Chair', label: 'Vice-Chair' },
           ]}
         />
+        <div className='form-messages'>
+          { formMessage }
+        </div>
 
         <div className='form-buttons'>
           <button
@@ -318,16 +331,19 @@ class NewCommitteeTermForm extends PureComponent {
 
 function committeeOptions() {
   return [
-    { value: 1, label: 'Tax Abatement' },
-    { value: 2, label: 'Education' },
-    { value: 3, label: 'Human Services' },
-    { value: 4, label: 'Finance' },
-    { value: 5, label: 'Public Safety' },
-    { value: 6, label: 'Legislation' },
-    { value: 7, label: 'Youth Services' },
-    { value: 8, label: 'Community Development' },
-    { value: 9, label: 'Aldermanic Affairs' },
-    { value: 10, label: 'City Services and Environmental Policy' },
+    { value: 'Tax Abatement**' + 1, label: 'Tax Abatement' },
+    { value: 'Education**' + 2, label: 'Education' },
+    { value: 'Human Services**' + 3, label: 'Human Services' },
+    { value: 'Finance**' + 4, label: 'Finance' },
+    { value: 'Public Safety**' + 5, label: 'Public Safety' },
+    { value: 'Legislation**' + 6, label: 'Legislation' },
+    { value: 'Youth Services**' + 7, label: 'Youth Services' },
+    { value: 'Community Development**' + 8, label: 'Community Development' },
+    { value: 'Aldermanic Affairs**' + 9, label: 'Aldermanic Affairs' },
+    {
+      value: 'City Services and Environmental Policy**' + 10,
+      label: 'City Services and Environmental Policy'
+    },
   ];
 }
 

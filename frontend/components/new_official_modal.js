@@ -53,23 +53,21 @@ export default class NewOfficialModal extends PureComponent {
     // console.log(this.state);
     e.preventDefault();
     this.setState({ formMessage: '' });
-    try {
-      this.validateInputs();
-      http.post('/politicians', officialModel(this.state)).then(res => {
-        this.setState({
-          ...newOfficialModalInitialState(),
-          formMessage: 'Successfully created new official',
-        });
-        console.log(res);
-      }).catch(err => {
-        const errorMessage = err.message || 'There was an error';
-        this.setState({ formMessage: errorMessage });
-        console.warn(err);
+    const validationResult = this.validateInputs();
+    this.setState(validationResult);
+    if (!validationResult.formValid) return;
+
+    http.post('/politicians', officialModel(this.state)).then(res => {
+      this.setState({
+        ...newOfficialModalInitialState(),
+        formMessage: 'Successfully created new official',
       });
-    } catch (errors) {
-      console.error(errors);
-      this.setState({ ...errors });
-    }
+      console.log(res);
+    }).catch(err => {
+      const errorMessage = err.message || 'There was an error';
+      this.setState({ formMessage: errorMessage });
+      console.warn(err);
+    });
   }
 
   validateInputs() {
@@ -83,7 +81,11 @@ export default class NewOfficialModal extends PureComponent {
     const dataSanityResult = this.validateDataSanity();
     if (!dataSanityResult.isValid) formValid = false;
 
-    if (!formValid) throw { ...requiredFieldsResult.errors, ...dataSanityResult.errors };
+    return {
+      formValid,
+      ...requiredFieldsResult.errors,
+      ...dataSanityResult.errors
+    };
   }
 
   validateDataSanity() {

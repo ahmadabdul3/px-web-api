@@ -3,8 +3,8 @@ import models from 'src/db/models';
 
 const router = express.Router();
 
-router.get('/politicians', getPoliticians);
-router.post('/politicians', createPolitician);
+router.get('/', getPoliticians);
+router.post('/', createPolitician);
 
 export default router;
 
@@ -13,6 +13,7 @@ function getPoliticians(req, res) {
     const politicians = r.map(p => models.politician.normalizedForUi(p));
     res.json({ status: 'success', politicians });
   }).catch(err => {
+    console.log(err);
     res.json({ status: 'fail', err });
   });
 }

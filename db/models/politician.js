@@ -31,9 +31,15 @@ module.exports = (sequelize, DataTypes) => {
     return politician.findAll({
       include: [{
         model: models.officeHolderTerm,
-        include: [{
-          model: models.contactInfo
-        }],
+        include: [
+          { model: models.contactInfo },
+          {
+            model: models.committeeTerm,
+            include: [{
+              model: models.committee,
+            }],
+          }
+        ],
       }],
       ...conditions,
     });
@@ -45,11 +51,26 @@ module.exports = (sequelize, DataTypes) => {
     const pol = p.get({ plain: true });
     const officeHolderTerm = pol.officeHolderTerms[0];
     const contactInfo = officeHolderTerm.contactInfos[0];
+    const committeeTerms = officeHolderTerm.committeeTerms;
+    let committees = [];
+
+    if (committeeTerms) {
+      committees = committeeTerms.map(ct => {
+        const { committee } = ct;
+        return {
+          committeeTermId: ct.id,
+          committeeTermTitle: ct.title,
+          committeeName: committee.name,
+          committeeId: committee.id,
+        };
+      });
+    }
 
     return prepPoliticianModelForUi({
       ...pol,
       ...officeHolderTerm,
       ...contactInfo,
+      committees,
       id: pol.id,
       officeHolderTermId: officeHolderTerm.id,
       contactInfoId: contactInfo.id,
