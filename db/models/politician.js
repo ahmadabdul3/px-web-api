@@ -49,8 +49,8 @@ module.exports = (sequelize, DataTypes) => {
   //   models included (officeHolderTerm and contactInfo)
   politician.normalizedForUi = (p) => {
     const pol = p.get({ plain: true });
-    const officeHolderTerm = pol.officeHolderTerms[0];
-    const contactInfo = officeHolderTerm.contactInfos[0];
+    const officeHolderTerm = pol.officeHolderTerms && pol.officeHolderTerms[0] || {};
+    const contactInfo = officeHolderTerm.contactInfos && officeHolderTerm.contactInfos[0] || {};
     const committeeTerms = officeHolderTerm.committeeTerms;
     let committees = [];
 

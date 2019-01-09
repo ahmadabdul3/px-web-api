@@ -114,6 +114,13 @@ export default class HomePage extends Component {
     this.setState({ address });
   }
 
+  politicianIsFiltered(p, filter) {
+    const fullName = `${p.firstName} ${p.middleName} ${p.lastName} ${p.suffix}`.toLowerCase();
+    const politicalTitle = `${p.titlePrimary} ${p.levelOfResponsibility} ${p.areaOfResponsibility} ${p.party}`.toLowerCase();
+
+    return (!fullName.includes(filter) && !politicalTitle.includes(filter));
+  }
+
   renderPoliticians() {
     const { politicians, committees } = this.state;
     const headerFilter = this.state.headerFilter.toLowerCase();
@@ -123,14 +130,7 @@ export default class HomePage extends Component {
       const p = politicians[politicianId];
       const c = committees[politicianId];
 
-      if (headerFilter) {
-        const fullName = `${p.firstName} ${p.middleName} ${p.lastName} ${p.suffix}`.toLowerCase();
-        const politicalTitle = `${p.titlePrimary} ${p.levelOfResponsibility} ${p.areaOfResponsibility} ${p.party}`.toLowerCase();
-
-        if (!fullName.includes(headerFilter) && !politicalTitle.includes(headerFilter)) {
-          return;
-        }
-      }
+      if (headerFilter && this.politicianIsFiltered(p, headerFilter)) return;
 
       return (
         <PoliticianSummaryCard

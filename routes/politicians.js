@@ -1,6 +1,7 @@
 import express from 'express';
 import models from 'src/db/models';
 
+const { politician } = models;
 const router = express.Router();
 
 router.get('/', getPoliticians);
@@ -9,8 +10,8 @@ router.post('/', createPolitician);
 export default router;
 
 function getPoliticians(req, res) {
-  models.politician.findAllWithRelations().then(r => {
-    const politicians = r.map(p => models.politician.normalizedForUi(p));
+  politician.findAllWithRelations().then(r => {
+    const politicians = r.map(p => politician.normalizedForUi(p));
     res.json({ status: 'success', politicians });
   }).catch(err => {
     console.log(err);
@@ -19,18 +20,20 @@ function getPoliticians(req, res) {
 }
 
 function createPolitician(req, res) {
-  models.politician.findDuplicates(req.body).then(r => {
-    if (r.length < 1) {
-      res.json({ status: 'success', message: 'created successfully' });
-      return;
-    }
+  politician.findDuplicates(req.body).then(r => {
+    // if (r.length < 1) return politician.create(req.body);
+    return;
 
-    const politicians = r.map(p => models.politician.normalizedForUi(p));
+    const politicians = r.map(p => politician.normalizedForUi(p));
     res.status(409).json({
       status: 'fail',
-      message: "There's already an office holder for that position",
+      message: 'A duplicate office holder was found',
       data: politicians,
     });
+  }).then(createResult => {
+    const message = 'successfully created a new office holder';
+    console.log('create result', createResult);
+    res.json({ message, politician: politician.normalizedForUi(createResult) });
   }).catch(err => {
     res.json({ status: 'fail', message: err });
   });
