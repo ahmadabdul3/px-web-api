@@ -27,8 +27,10 @@ module.exports = (sequelize, DataTypes) => {
     // politician.hasMany(models.committeeTerm);
   };
 
-  politician.findAllWithRelations = (conditions) => {
+  politician.findAllWithRelations = (ops) => {
+    const options = ops && ops.options;
     return politician.findAll({
+      ...options,
       include: [{
         model: models.officeHolderTerm,
         include: [
@@ -41,7 +43,60 @@ module.exports = (sequelize, DataTypes) => {
           }
         ],
       }],
-      ...conditions,
+    });
+  };
+
+  politician.findOneWithRelations = ({ id, options }) => {
+    return politician.findAllWithRelations({ options: {
+      ...options, where: { id }
+    }}).then(r => r[0]);
+  };
+
+  politician.createWithRelations = (data) => {
+    let politicianData;
+
+    return sequelize.transaction(transaction => {
+      return politician.create(data, { transaction }).then(polRes => {
+        politicianData = polRes;
+        const politicianId = polRes.dataValues.id;
+        return models.officeHolderTerm.create({ ...data, politicianId }, { transaction });
+      }).then(ohtRes => {
+        const officeHolderTermId = ohtRes.dataValues.id;
+        return models.contactInfo.create({ ...data, officeHolderTermId }, { transaction })
+      }).catch(err => {
+        console.log('POLITICIAN ERROR - createWithRelations ***', err);
+        throw(err);
+      });
+    }).then(result => {
+      const { id } = politicianData.dataValues;
+      return politician.findOneWithRelations({ id });
+    }).then(politicianWithRelations => {
+      console.log('politicianWithRelations', politicianWithRelations);
+      return politician.normalizedForUi(politicianWithRelations);
+    }).catch(err => {
+      console.log('POLITICIAN TRANSACTION ERROR - createWithRelations ***', err);
+      throw(err);
+    });
+  };
+
+  politician.findDuplicates = ({
+    city,
+    state,
+    levelOfResponsibility,
+    areaOfResponsibility,
+    titlePrimary
+  }) => {
+    return politician.findAll({
+      include: [{
+        model: models.officeHolderTerm,
+        required: true,
+        where: { levelOfResponsibility, areaOfResponsibility, titlePrimary },
+        include: [{
+          model: models.contactInfo,
+          required: true,
+          where: { city, state },
+        }],
+      }],
     });
   };
 
@@ -74,27 +129,6 @@ module.exports = (sequelize, DataTypes) => {
       id: pol.id,
       officeHolderTermId: officeHolderTerm.id,
       contactInfoId: contactInfo.id,
-    });
-  }
-
-  politician.findDuplicates = ({
-    city,
-    state,
-    levelOfResponsibility,
-    areaOfResponsibility,
-    titlePrimary
-  }) => {
-    return politician.findAll({
-      include: [{
-        model: models.officeHolderTerm,
-        required: true,
-        where: { levelOfResponsibility, areaOfResponsibility, titlePrimary },
-        include: [{
-          model: models.contactInfo,
-          required: true,
-          where: { city, state },
-        }],
-      }],
     });
   };
 

@@ -34,6 +34,17 @@ export default class HomePage extends Component {
     });
   }
 
+  // - don't need to worry about committees with a new politician because
+  //   the new politician form doesn't have a way to add committees
+  // - if we add the ability to add committees during politician creation
+  //   then we'll have to update this method to also add the committees
+  //   to the state
+  addPolitician = (p) => {
+    const { politicians } = this.state;
+    politicians[p.id] = p;
+    this.setState({ politicians });
+  }
+
   getPoliticiansAndCommittees(rawPoliticians) {
     const committees = {};
     const politicians = {};
@@ -161,7 +172,10 @@ export default class HomePage extends Component {
       <div className='home-page'>
         {
           newOfficialModalOpen && (
-            <NewOfficialModal hideModal={this.closeNewOfficialModal} />
+            <NewOfficialModal
+              hideModal={this.closeNewOfficialModal}
+              addPolitician={this.addPolitician}
+            />
           )
         }
         {

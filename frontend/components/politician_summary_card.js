@@ -1,6 +1,10 @@
 import React, { PureComponent } from 'react';
 
 export default class PoliticianSummaryCard extends PureComponent {
+  static defaultProps = {
+    committees: [],
+  };
+
   render() {
     const { politician, addCommitteeTerm, committees } = this.props;
     const {

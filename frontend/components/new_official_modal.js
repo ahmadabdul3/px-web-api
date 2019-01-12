@@ -62,9 +62,10 @@ export default class NewOfficialModal extends PureComponent {
         ...newOfficialModalInitialState(),
         formMessage: 'Successfully created new official',
       });
+      this.props.addPolitician(res.politician);
       console.log(res);
     }).catch(err => {
-      const errorMessage = err.message || 'There was an error';
+      const errorMessage = err.message.length ? err.message : 'There was an error';
       this.setState({ formMessage: errorMessage });
       console.warn(err);
     });
@@ -93,10 +94,10 @@ export default class NewOfficialModal extends PureComponent {
     const errors = {};
     const { titlePrimary, levelOfResponsibility } = this.state;
 
-    if (titlePrimary === 'alder' && levelOfResponsibility !== 'district') {
+    if (titlePrimary === 'Alder' && levelOfResponsibility !== 'District') {
       errors.formMessage = "An Alder's 'Level of Responsibility' should be 'District'";
       isValid = false;
-    } else if (titlePrimary === 'mayor' && levelOfResponsibility !== 'city') {
+    } else if (titlePrimary === 'Mayor' && levelOfResponsibility !== 'City') {
       errors.formMessage = "A Mayor's 'Level of Responsibility' should be 'City'";
       isValid = false;
     }

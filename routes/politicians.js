@@ -21,8 +21,17 @@ function getPoliticians(req, res) {
 
 function createPolitician(req, res) {
   politician.findDuplicates(req.body).then(r => {
-    // if (r.length < 1) return politician.create(req.body);
-    return;
+    if (r.length < 1) {
+      politician.createWithRelations(req.body).then(createResult => {
+        const message = 'successfully created a new office holder';
+        res.json({ message, politician: createResult });
+      }).catch(err => {
+        console.log('error', err);
+        res.status(422).json({ status: 'fail', message: err });
+      });
+
+      return;
+    }
 
     const politicians = r.map(p => politician.normalizedForUi(p));
     res.status(409).json({
@@ -30,11 +39,7 @@ function createPolitician(req, res) {
       message: 'A duplicate office holder was found',
       data: politicians,
     });
-  }).then(createResult => {
-    const message = 'successfully created a new office holder';
-    console.log('create result', createResult);
-    res.json({ message, politician: politician.normalizedForUi(createResult) });
   }).catch(err => {
-    res.json({ status: 'fail', message: err });
+    res.status(422).json({ status: 'fail', message: err });
   });
 }
