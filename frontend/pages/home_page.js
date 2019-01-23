@@ -45,6 +45,10 @@ export default class HomePage extends Component {
     this.setState({ politicians });
   }
 
+  editPolitician = (p) => {
+    console.log('p', p);
+  }
+
   getPoliticiansAndCommittees(rawPoliticians) {
     const committees = {};
     const politicians = {};
@@ -149,6 +153,7 @@ export default class HomePage extends Component {
           committees={c}
           key={p.id}
           addCommitteeTerm={this.openNewCommitteeTermModal}
+          editPolitician={this.editPolitician}
         />
       );
     });

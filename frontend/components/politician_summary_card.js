@@ -6,7 +6,7 @@ export default class PoliticianSummaryCard extends PureComponent {
   };
 
   render() {
-    const { politician, addCommitteeTerm, committees } = this.props;
+    const { politician, addCommitteeTerm, committees, editPolitician } = this.props;
     const {
       firstName,
       middleName,
@@ -21,7 +21,11 @@ export default class PoliticianSummaryCard extends PureComponent {
     const politicalTitle = `${titlePrimary}, ${levelOfResponsibility} ${areaOfResponsibility} - ${party}`;
 
     return (
-      <div key={politician.id} className='card'>
+      <div key={politician.id} className='politician-summary-card'>
+        <div className='edit-politician' onClick={() => { editPolitician(politician); }}>
+          <i className='fas fa-pencil-alt' />
+          Edit
+        </div>
         <div className='name'>
           { fullName }
         </div>
