@@ -2,10 +2,12 @@ import fs from 'fs';
 import path from 'path';
 import repl from 'repl';
 import db from 'src/db/models';
+import classifyPoint from 'robust-point-in-polygon';
 import {
   migrateOfficialsData,
   reassignPoliticianContactInfoToOfficeHolderTerm
 } from 'src/services/data_migrations';
+import { getAllWardsAsObj } from 'src/services/location_finder';
 
 const { sequelize } = db;
 const envName = process.env.NODE_ENV || "dev";
@@ -24,7 +26,8 @@ replServer.context.filename = __filename;
 replServer.context.getAll = getAll;
 replServer.context.migrateOfficialsData = migrateOfficialsData;
 replServer.context.reassignPoliticianContactInfoToOfficeHolderTerm = reassignPoliticianContactInfoToOfficeHolderTerm;
-
+replServer.context.classifyPoint = classifyPoint;
+replServer.context.getNewHavenWards = getAllWardsAsObj;
 
 function getAll(modelName) {
   db[modelName].findAll().then(res => {

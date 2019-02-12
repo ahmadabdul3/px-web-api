@@ -13,8 +13,8 @@ import {
   validateRequiredFields
 } from 'src/frontend/services/form_validator';
 
-function newOfficialModalInitialState() {
-  const official = officeHolderModel();
+function editOfficeHolderModalInitialState(politician) {
+  const official = officeHolderModel(politician);
   const formValidationState = generateValidationStateForForm({ formFields: official });
 
   return {
@@ -23,28 +23,28 @@ function newOfficialModalInitialState() {
   };
 }
 
-export default class NewOfficialModal extends PureComponent {
-  state = newOfficialModalInitialState();
+export default class EditOfficeHolderModal extends PureComponent {
+  state = editOfficeHolderModalInitialState(this.props.politician);
 
   onSubmit = () => {
-    // console.log(this.state);
-    this.setState({ formMessage: '' });
-    const validationResult = this.validate();
-    this.setState(validationResult);
-    if (!validationResult.formValid) return;
-
-    http.post('/politicians', officeHolderModel(this.state)).then(res => {
-      this.setState({
-        ...newOfficialModalInitialState(),
-        formMessage: 'Successfully created new official',
-      });
-      this.props.addPolitician(res.politician);
-      console.log(res);
-    }).catch(err => {
-      const errorMessage = err.message.length ? err.message : 'There was an error';
-      this.setState({ formMessage: errorMessage });
-      console.warn(err);
-    });
+    console.log(this.state);
+    // this.setState({ formMessage: '' });
+    // const validationResult = this.validate();
+    // this.setState(validationResult);
+    // if (!validationResult.formValid) return;
+    //
+    // http.post('/politicians', officeHolderModel(this.state)).then(res => {
+    //   this.setState({
+    //     ...newOfficialModalInitialState(),
+    //     formMessage: 'Successfully created new official',
+    //   });
+    //   this.props.addPolitician(res.politician);
+    //   console.log(res);
+    // }).catch(err => {
+    //   const errorMessage = err.message.length ? err.message : 'There was an error';
+    //   this.setState({ formMessage: errorMessage });
+    //   console.warn(err);
+    // });
   }
 
   validate() {
@@ -107,9 +107,9 @@ export default class NewOfficialModal extends PureComponent {
         <div className='new-official-modal'>
           <OfficeHolderForm
             onSubmit={this.onSubmit}
-            submitButtonLabel='Create'
+            submitButtonLabel='Update'
             cancelForm={hideModal}
-            title='Create a New Official'
+            title='Update Official'
             onChange={this.onChange}
             formMessage={formMessage}
             firstName={firstName}

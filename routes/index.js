@@ -4,6 +4,8 @@ import models from 'src/db/models';
 import fetch from 'node-fetch';
 import politicanRoutes from './politicians';
 import committeeTermRoutes from './committee_terms';
+import http from 'src/services/http';
+import { determineWardNumberFromLocation } from 'src/services/location_finder';
 
 const router = express.Router();
 router.use('/politicians', politicanRoutes);
@@ -26,32 +28,33 @@ router.post('/alders/bulk-create', (req, res) => {
 });
 
 router.get('/address', (req, res) => {
-  // getPlaceId(req.query.address).then(response => {
-  //   // console.log(response);
-  //   // res.json(response);
-  //   return response;
-  // }).then(response => {
-  //   const { candidates } = response;
-  //   if (candidates.length > 0) return candidates[0].geometry;
-  //   else res.json({ status: 'err', message: 'place not found' });
-  // }).then(geometry => {
-  //   return getWardInfo(geometry);
-  // }).then(details => {
-  //   res.json({ status: 'success', data: details });
-  // }).catch(err => {
-  //   console.log(err);
-  //   res.json({ status: 'err' , message: err });
-  // });
-  getInfo(req.query.address)
-    .then(response => {
-      res.json({ status: 'success', data: response });
-    }).catch(err => {
-      console.log(err);
-      res.json({ status: 'fail', data: err });
-    });
+  getPlaceId(req.query.address).then(response => {
+    console.log('response', response);
+    const { candidates } = response;
+    if (candidates.length > 0) {
+      const location = candidates[0].geometry.location;
+      const locationArray = [ location.lat, location.lng ];
+      console.log('location', location);
+      console.log('locationArray', locationArray);
+      const locationRes = determineWardNumberFromLocation({ location: locationArray });
+      res.json({ locationRes });
+      return;
+    }
+    else res.json({ status: 'err', message: 'place not found' });
+  }).catch(err => {
+    console.log(err);
+    res.json({ status: 'err' , message: err });
+  });
+  // getInfo(req.query.address)
+  //   .then(response => {
+  //     res.json({ status: 'success', data: response });
+  //   }).catch(err => {
+  //     console.log(err);
+  //     res.json({ status: 'fail', data: err });
+  //   });
 });
 
-const apikey = `AIzaSyBGw0mWKck6f5wkqE4HMZ3h4KoIq0LD96w`;
+const apikey = `AIzaSyAWa-ur0Q3eM7d_ga1EljKwT9V9U1vDYpc`;
 
 function getInfo(address) {
   const urlStart = 'https://content.googleapis.com/civicinfo/v2/representatives?'
@@ -71,18 +74,16 @@ function getPlaceId(address) {
   const urlEnd = `&inputtype=textquery&fields=place_id,geometry&key=${apikey}`;
   const url = `${urlStart}${input}${urlEnd}`;
 
-  return fetch(url)
-    .then(res => res.json())
+  return http.get(url)
     .then(res => res)
     .catch(err => {
-      console.log(err);
+      console.log('error', err);
       return err;
     });
 }
 
 function getWardInfo(geometry) {
-  return fetch(getMapUrl(geometry.location))
-    .then(res => res.json())
+  return http.get(getMapUrl(geometry.location))
     .then(res => res)
     .catch(err => {
       console.log(err);

@@ -9,7 +9,7 @@ export default class FormTextarea extends Component {
     const { name, onChange } = this.props;
     const { value } = e.target;
 
-    onChange(name, value);
+    onChange({ name, value });
   }
 
   render() {

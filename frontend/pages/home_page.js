@@ -2,6 +2,7 @@ import React, { Component, PureComponent } from 'react';
 import appRoutes from 'src/constants/routes';
 import { NavLink } from 'react-router-dom';
 import NewOfficialModal from 'src/frontend/components/new_official_modal';
+import EditOfficeHolderModal from 'src/frontend/components/edit_office_holder_modal';
 import http from 'src/frontend/services/http';
 import PoliticianSummaryCard from 'src/frontend/components/politician_summary_card';
 import FormInput from 'src/frontend/components/form_input';
@@ -16,12 +17,15 @@ export default class HomePage extends Component {
   state = {
     loading: false,
     newOfficialModalOpen: false,
+    editOfficeHolderModalOpen: false,
     newCommitteeTermModalOpen: false,
     address: '',
+    addressResult: '',
     politicians: {},
     committees: {},
     error: '',
     politicianForNewCommitteeTerm: undefined,
+    politicianForEdit: undefined,
     headerFilter: '',
   }
 
@@ -43,6 +47,26 @@ export default class HomePage extends Component {
     const { politicians } = this.state;
     politicians[p.id] = p;
     this.setState({ politicians });
+  }
+
+  updatePolitician = (p) => {
+    const { politicians } = this.state;
+    politicians[p.id] = p;
+    this.setState({ politicians });
+  }
+
+  openEditOfficeHolderModal = (politicianForEdit) => {
+    this.setState({
+      editOfficeHolderModalOpen: true,
+      politicianForEdit,
+    });
+  }
+
+  closeEditOfficeHolderModal = (p) => {
+    this.setState({
+      editOfficeHolderModalOpen: false,
+      politicianForEdit: undefined,
+    });
   }
 
   editPolitician = (p) => {
@@ -120,13 +144,13 @@ export default class HomePage extends Component {
 
     http.get('/address?address=' + address).then((res) => {
       console.log('RESPONSE', res);
-      if (res.status === 'err') this.setState({ data: res.message });
-      else this.setState({ data: res.data });
+      if (res.status === 'err') this.setState({ addressResult: { wardNumber: 'not found' } });
+      else this.setState({ addressResult: res.locationRes });
     });
   }
 
-  updateAddress = (name, address) => {
-    this.setState({ address });
+  updateAddress = ({ name, value }) => {
+    this.setState({ address: value });
   }
 
   politicianIsFiltered(p, filter) {
@@ -153,7 +177,7 @@ export default class HomePage extends Component {
           committees={c}
           key={p.id}
           addCommitteeTerm={this.openNewCommitteeTermModal}
-          editPolitician={this.editPolitician}
+          editPolitician={() => { this.openEditOfficeHolderModal(p); }}
         />
       );
     });
@@ -168,9 +192,12 @@ export default class HomePage extends Component {
       address,
       data,
       newOfficialModalOpen,
+      editOfficeHolderModalOpen,
       newCommitteeTermModalOpen,
       politicianForNewCommitteeTerm,
       headerFilter,
+      politicianForEdit,
+      addressResult
     } = this.state;
 
     return (
@@ -180,6 +207,15 @@ export default class HomePage extends Component {
             <NewOfficialModal
               hideModal={this.closeNewOfficialModal}
               addPolitician={this.addPolitician}
+            />
+          )
+        }
+        {
+          editOfficeHolderModalOpen && (
+            <EditOfficeHolderModal
+              hideModal={this.closeEditOfficeHolderModal}
+              updatePolitician={this.updatePolitician}
+              politician={politicianForEdit}
             />
           )
         }
@@ -208,6 +244,20 @@ export default class HomePage extends Component {
             </button>
           </div>
         </header>
+        <section>
+          <div className='form-box' style={{ marginTop: '20px' }}>
+            <h2>
+              Search for an address
+            </h2>
+            <FormInput labelText='address' value={address} onChange={this.updateAddress} />
+            <button className='address-search-button' onClick={this.searchAddress}>
+              search
+            </button>
+            <div style={{ marginTop: '20px'}}>
+              Ward Number: { addressResult.wardNumber }
+            </div>
+          </div>
+        </section>
         <section className='home-page__content'>
           <div className='content'>
             {
