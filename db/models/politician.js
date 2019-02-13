@@ -15,7 +15,8 @@ module.exports = (sequelize, DataTypes) => {
     firstName: DataTypes.TEXT,
     middleName: DataTypes.TEXT,
     lastName: DataTypes.TEXT,
-    suffix: DataTypes.TEXT
+    suffix: DataTypes.TEXT,
+    missionStatement: DataTypes.TEXT,
   }, {});
 
   politician.associate = function(models) {
@@ -62,13 +63,52 @@ module.exports = (sequelize, DataTypes) => {
         return models.officeHolderTerm.create({ ...data, politicianId }, { transaction });
       }).then(ohtRes => {
         const officeHolderTermId = ohtRes.dataValues.id;
-        return models.contactInfo.create({ ...data, officeHolderTermId }, { transaction })
+        return models.contactInfo.create({ ...data, officeHolderTermId }, { transaction });
       }).catch(err => {
         console.log('POLITICIAN ERROR - createWithRelations ***', err);
         throw(err);
       });
     }).then(result => {
       const { id } = politicianData.dataValues;
+      return politician.findOneWithRelations({ id });
+    }).then(politicianWithRelations => {
+      console.log('politicianWithRelations', politicianWithRelations);
+      return politician.normalizedForUi(politicianWithRelations);
+    }).catch(err => {
+      console.log('POLITICIAN TRANSACTION ERROR - createWithRelations ***', err);
+      throw(err);
+    });
+  };
+
+  politician.updateWithRelations = (data) => {
+    const { id } = data;
+    // - remove the id so that it doesnt get updated
+    delete data.id;
+
+    return sequelize.transaction(transaction => {
+      return politician.update(data, {
+        transaction,
+        where: { id },
+        returning: true,
+      }).then(polRes => {
+        const politicianId = polRes[1][0].dataValues.id;
+        return models.officeHolderTerm.update(data, {
+          transaction,
+          where: { politicianId },
+          returning: true,
+        });
+      }).then(ohtRes => {
+        const officeHolderTermId = ohtRes[1][0].dataValues.id;
+        return models.contactInfo.update(data, {
+          transaction,
+          where: { officeHolderTermId },
+          returning: true,
+        });
+      }).catch(err => {
+        console.log('POLITICIAN ERROR - updateWithRelations ***', err);
+        throw(err);
+      });
+    }).then(result => {
       return politician.findOneWithRelations({ id });
     }).then(politicianWithRelations => {
       console.log('politicianWithRelations', politicianWithRelations);

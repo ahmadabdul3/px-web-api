@@ -2,13 +2,13 @@ import express from 'express';
 import path from 'path';
 import models from 'src/db/models';
 import fetch from 'node-fetch';
-import politicanRoutes from './politicians';
+import politicianRoutes from './politicians';
 import committeeTermRoutes from './committee_terms';
 import http from 'src/services/http';
 import { determineWardNumberFromLocation } from 'src/services/location_finder';
 
 const router = express.Router();
-router.use('/politicians', politicanRoutes);
+router.use('/politicians', politicianRoutes);
 router.use('/committee-terms', committeeTermRoutes);
 
 router.post('/alders', (req, res) => {

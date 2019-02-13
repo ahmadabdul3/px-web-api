@@ -244,20 +244,6 @@ export default class HomePage extends Component {
             </button>
           </div>
         </header>
-        <section>
-          <div className='form-box' style={{ marginTop: '20px' }}>
-            <h2>
-              Search for an address
-            </h2>
-            <FormInput labelText='address' value={address} onChange={this.updateAddress} />
-            <button className='address-search-button' onClick={this.searchAddress}>
-              search
-            </button>
-            <div style={{ marginTop: '20px'}}>
-              Ward Number: { addressResult.wardNumber }
-            </div>
-          </div>
-        </section>
         <section className='home-page__content'>
           <div className='content'>
             {
@@ -445,12 +431,20 @@ function committeeOptions() {
 
 // this stuff below here is for when I had that google address finder thing
 //
-// <div className='form-box'>
-//   <FormInput labelText='address' value={address} onChange={this.updateAddress} />
-//   <button className='address-search-button' onClick={this.searchAddress}>
-//     search
-//   </button>
-// </div>
+// <section>
+//   <div className='form-box' style={{ marginTop: '20px' }}>
+//     <h2>
+//       Search for an address
+//     </h2>
+//     <FormInput labelText='address' value={address} onChange={this.updateAddress} />
+//     <button className='address-search-button' onClick={this.searchAddress}>
+//       search
+//     </button>
+//     <div style={{ marginTop: '20px'}}>
+//       Ward Number: { addressResult.wardNumber }
+//     </div>
+//   </div>
+// </section>
 // { renderData(data) }
 //
 // function renderData(data) {

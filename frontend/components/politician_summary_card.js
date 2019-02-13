@@ -15,7 +15,8 @@ export default class PoliticianSummaryCard extends PureComponent {
       levelOfResponsibility,
       areaOfResponsibility,
       titlePrimary,
-      party
+      party,
+      missionStatement,
     } = politician;
     const fullName = `${firstName} ${middleName} ${lastName}, ${suffix}`;
     const politicalTitle = `${titlePrimary}, ${levelOfResponsibility} ${areaOfResponsibility} - ${party}`;
@@ -35,7 +36,16 @@ export default class PoliticianSummaryCard extends PureComponent {
         <div className='contact-info'>
           <ContactInfo politician={politician} />
         </div>
+        <div className='politician-summary-card__mission-statement'>
+          <h3>
+            Mission Statement
+          </h3>
+          { missionStatement }
+        </div>
         <div className='committees'>
+          <h3>
+            Committees
+          </h3>
           {
             committees.map((c, i) => <Committee key={c.committeeTermId} committee={c} />)
           }

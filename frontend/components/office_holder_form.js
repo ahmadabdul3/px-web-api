@@ -219,10 +219,10 @@ export default class OfficeHolderForm extends PureComponent {
         </div>
         <div className='mission-statement'>
           <div className='form-column__title'>
-            Mission Statement - num chars { missionStatement.length }
+            Mission Statement
           </div>
           <FormTextarea
-            labelText=''
+            labelText={`Number of characters: ${missionStatement.length}`}
             onChange={onChange}
             name='missionStatement'
             value={missionStatement}

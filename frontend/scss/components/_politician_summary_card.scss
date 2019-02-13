@@ -43,6 +43,12 @@
     margin-top: 20px;
     padding-top: 20px;
 
+    h3 {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
     .button {
       margin-right: 10px;
       margin-top: 10px;
@@ -51,5 +57,16 @@
         margin-right: 0;
       }
     }
+  }
+}
+
+.politician-summary-card__mission-statement {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+
+  h3 {
+    font-weight: bold;
+    font-size: 16px;
   }
 }

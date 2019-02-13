@@ -1,5 +1,6 @@
 export default function officeHolderModel(values={}) {
   return {
+    id: values.id || null,
     firstName: values.firstName || '',
     middleName: values.middleName || '',
     lastName: values.lastName || '',
