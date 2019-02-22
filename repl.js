@@ -8,6 +8,7 @@ import {
   reassignPoliticianContactInfoToOfficeHolderTerm
 } from 'src/services/data_migrations';
 import { getAllWardsAsObj } from 'src/services/location_finder';
+import { getAddressInfo } from 'src/services/address_manager';
 
 const { sequelize } = db;
 const envName = process.env.NODE_ENV || "dev";
@@ -28,6 +29,7 @@ replServer.context.migrateOfficialsData = migrateOfficialsData;
 replServer.context.reassignPoliticianContactInfoToOfficeHolderTerm = reassignPoliticianContactInfoToOfficeHolderTerm;
 replServer.context.classifyPoint = classifyPoint;
 replServer.context.getNewHavenWards = getAllWardsAsObj;
+replServer.context.getAddressInfo = getAddressInfo;
 
 function getAll(modelName) {
   db[modelName].findAll().then(res => {

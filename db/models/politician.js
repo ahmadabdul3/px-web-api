@@ -28,14 +28,43 @@ module.exports = (sequelize, DataTypes) => {
     // politician.hasMany(models.committeeTerm);
   };
 
+  politician.findAllWithRelationsForLocation = ({ location }) => {
+    const { state, city, district } = location;
+    const officeHolderTermOptions = {
+      where: {
+        [models.Sequelize.Op.or]: [
+          {
+            areaOfResponsibility: city,
+            levelOfResponsibility: "City",
+          },
+          {
+            areaOfResponsibility: state,
+            levelOfResponsibility: "State",
+          },
+          {
+            areaOfResponsibility: district,
+            levelOfResponsibility: "District",
+          }
+        ]
+      }
+    };
+    return politician.findAllWithRelations({ officeHolderTermOptions });
+  };
+
   politician.findAllWithRelations = (ops) => {
     const options = ops && ops.options;
+    const officeHolderTermOptions = ops && ops.officeHolderTermOptions;
+    const contactInfoOptions = ops && ops.contactInfoOptions;
     return politician.findAll({
       ...options,
       include: [{
         model: models.officeHolderTerm,
+        ...officeHolderTermOptions,
         include: [
-          { model: models.contactInfo },
+          {
+            model: models.contactInfo,
+            ...contactInfoOptions,
+          },
           {
             model: models.committeeTerm,
             include: [{

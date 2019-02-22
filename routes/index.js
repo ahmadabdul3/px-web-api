@@ -6,10 +6,27 @@ import politicianRoutes from './politicians';
 import committeeTermRoutes from './committee_terms';
 import http from 'src/services/http';
 import { determineWardNumberFromLocation } from 'src/services/location_finder';
+import { getAddressInfo } from 'src/services/address_manager';
+
 
 const router = express.Router();
 router.use('/politicians', politicianRoutes);
 router.use('/committee-terms', committeeTermRoutes);
+
+router.get('/address-info', (req, res) => {
+  const { address } = req.query;
+  getAddressInfo({ address }).then(addressInfo => {
+    const { lat, lng } = addressInfo.locationCoordinates;
+    const location = [lat, lng];
+    const wardResult = determineWardNumberFromLocation({ location });
+    if (wardResult.wardNumber) addressInfo.ward = wardResult.wardNumber;
+    else addressInfo.district = 'DISTRICT_NOT_FOUND';
+    res.json({ message: success, data: addressInfo });
+  }).catch(e => {
+    console.log(e);
+    res.status(400).json({ message: 'error', data: e });
+  });
+});
 
 router.post('/alders', (req, res) => {
   models.official.create(req.body).then((sqlRes) => {
@@ -28,19 +45,25 @@ router.post('/alders/bulk-create', (req, res) => {
 });
 
 router.get('/address', (req, res) => {
+  let locationId;
+  let location;
+  let locationArray;
   getPlaceId(req.query.address).then(response => {
     console.log('response', response);
     const { candidates } = response;
     if (candidates.length > 0) {
-      const location = candidates[0].geometry.location;
-      const locationArray = [ location.lat, location.lng ];
-      console.log('location', location);
-      console.log('locationArray', locationArray);
-      const locationRes = determineWardNumberFromLocation({ location: locationArray });
-      res.json({ locationRes });
-      return;
+      locationId = candidates[0].place_id;
+      location = candidates[0].geometry.location;
+      locationArray = [ location.lat, location.lng ];
+      // const locationRes = determineWardNumberFromLocation({ location: locationArray });
+      return  {};
     }
     else res.json({ status: 'err', message: 'place not found' });
+  }).then(response => {
+    return getPlaceDetails(locationId);
+  }).then(resp => {
+    res.json({ locationId, location, resp });
+    return;
   }).catch(err => {
     console.log(err);
     res.json({ status: 'err' , message: err });
@@ -82,6 +105,21 @@ function getPlaceId(address) {
     });
 }
 
+function getPlaceDetails(placeId) {
+  const urlStart = 'https://maps.googleapis.com/maps/api/place/details/json?';
+  const place = `placeid=${placeId}`
+  const urlEnd = `&fields=address_components,name,rating,formatted_phone_number&key=${apikey}`;
+  const url = `${urlStart}${place}${urlEnd}`;
+
+  return fetch(url)
+    .then(res => res.json())
+    .then(res => res)
+    .catch(err => {
+      console.log(err);
+      return err;
+    });
+}
+
 function getWardInfo(geometry) {
   return http.get(getMapUrl(geometry.location))
     .then(res => res)
@@ -109,21 +147,6 @@ function getMapUrl({ lat, lng }) {
     `&outSR=102100`,
   ];
   return urlParts.join('');
-}
-
-function getPlaceDetails(placeId) {
-  const urlStart = 'https://maps.googleapis.com/maps/api/place/details/json?';
-  const place = `placeid=${placeId}`
-  const urlEnd = `&fields=address_components,name,rating,formatted_phone_number&key=${apikey}`;
-  const url = `${urlStart}${place}${urlEnd}`;
-
-  return fetch(url)
-    .then(res => res.json())
-    .then(res => res)
-    .catch(err => {
-      console.log(err);
-      return err;
-    });
 }
 
 // send all requests to index.html so browserHistory in React Router works

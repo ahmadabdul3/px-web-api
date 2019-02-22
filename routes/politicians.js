@@ -1,10 +1,13 @@
 import express from 'express';
 import models from 'src/db/models';
+import { getAddressInfo } from 'src/services/address_manager';
 
 const { politician } = models;
 const router = express.Router();
 
 router.get('/', getPoliticians);
+router.get('/address/:address', getPoliticiansForAddress);
+router.get('/location', getPoliticiansForLocation);
 router.post('/', createPolitician);
 router.put('/', updatePolitician);
 
@@ -12,6 +15,39 @@ export default router;
 
 function getPoliticians(req, res) {
   politician.findAllWithRelations().then(r => {
+    const politicians = r.map(p => politician.normalizedForUi(p));
+    res.json({ status: 'success', politicians });
+  }).catch(err => {
+    console.log(err);
+    res.json({ status: 'fail', err });
+  });
+}
+
+// function getPoliticiansForAddress(req, res) {
+//   const { address } = req.params;
+//   getAddressInfo({ address }).then(addressInfo => {
+//     const { city } = addressInfo;
+//     const contactInfoOptions = { where: { city }};
+//     return politician.findAllWithRelations({ contactInfoOptions });
+//   }).then(r => {
+//     const politicians = r.map(p => politician.normalizedForUi(p));
+//     res.json({ status: 'success', politicians });
+//   }).catch(err => {
+//     console.log(err);
+//     res.json({ status: 'fail', err });
+//   });
+// }
+
+function getPoliticiansForLocation(req, res) {
+  const { city, state, district } = req.query;
+  let location = {};
+  let methodToCall = politician.findAllWithRelations;
+  if (district !== 'DISTRICT_NOT_FOUND') {
+    methodToCall = politician.findAllWithRelationsForLocation;
+    location = { city, state, district };
+  }
+
+  methodToCall({ location }).then(r => {
     const politicians = r.map(p => politician.normalizedForUi(p));
     res.json({ status: 'success', politicians });
   }).catch(err => {
