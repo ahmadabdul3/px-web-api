@@ -21,7 +21,7 @@ router.get('/address-info', (req, res) => {
     const wardResult = determineWardNumberFromLocation({ location });
     if (wardResult.wardNumber) addressInfo.ward = wardResult.wardNumber;
     else addressInfo.district = 'DISTRICT_NOT_FOUND';
-    res.json({ message: success, data: addressInfo });
+    res.json({ message: 'success', data: addressInfo });
   }).catch(e => {
     console.log(e);
     res.status(400).json({ message: 'error', data: e });
