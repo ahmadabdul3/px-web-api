@@ -51,18 +51,3 @@ function createFetchParams(method, bodyData, headers) {
 
   return params;
 }
-
-fetch(
-  'http://localhost:3000/api/clinical-notes/1',
-  { headers: {
-    Authorization: 'JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOjIsImlhdCI6MTU0OTkwNzc4MCwiZXhwIjoxNTQ5OTExMzgwfQ.RUfnweH4D9CO1zc-5B4DsFLRmvo7IqsvKEot_IPpPkQ'
-  }}
-).then((response) => {
-  const json = response.json();
-  if (!response.ok) return json.then(err => { throw err; });
-  return json;
-}).then(res => {
-  console.log('res', res);
-}).catch(er => {
-  console.log('err', er);
-});
