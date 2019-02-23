@@ -84,6 +84,7 @@ module.exports = (sequelize, DataTypes) => {
 
   politician.createWithRelations = (data) => {
     let politicianData;
+    delete data.id;
 
     return sequelize.transaction(transaction => {
       return politician.create(data, { transaction }).then(polRes => {
