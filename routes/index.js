@@ -19,7 +19,7 @@ router.get('/address-info', (req, res) => {
     const { lat, lng } = addressInfo.locationCoordinates;
     const location = [lat, lng];
     const wardResult = determineWardNumberFromLocation({ location });
-    if (wardResult.wardNumber) addressInfo.ward = wardResult.wardNumber;
+    if (wardResult.wardNumber) addressInfo.district = wardResult.wardNumber;
     else addressInfo.district = 'DISTRICT_NOT_FOUND';
     res.json({ message: 'success', data: addressInfo });
   }).catch(e => {
