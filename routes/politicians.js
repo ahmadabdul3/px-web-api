@@ -6,7 +6,7 @@ const { politician } = models;
 const router = express.Router();
 
 router.get('/', getPoliticians);
-router.get('/address/:address', getPoliticiansForAddress);
+// router.get('/address/:address', getPoliticiansForAddress);
 router.get('/location', getPoliticiansForLocation);
 router.post('/', createPolitician);
 router.put('/', updatePolitician);
