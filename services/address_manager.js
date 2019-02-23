@@ -8,6 +8,7 @@ export function getAddressInfo({ address }) {
 
   return getPlaceId(address).then(response => {
     const placeNotFoundError = { message: 'place not found from google places api' };
+    console.log('address ******', address);
     const { candidates } = response;
     if (!candidates || candidates.length < 1) throw placeNotFoundError;
 
