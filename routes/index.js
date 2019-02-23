@@ -77,7 +77,7 @@ router.get('/address', (req, res) => {
   //   });
 });
 
-const apikey = `AIzaSyAWa-ur0Q3eM7d_ga1EljKwT9V9U1vDYpc`;
+const apikey = process.env.GOOGLE_MAPS_API_KEY;
 
 function getInfo(address) {
   const urlStart = 'https://content.googleapis.com/civicinfo/v2/representatives?'
