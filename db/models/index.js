@@ -9,6 +9,7 @@ import candidateTerm from './candidate_term';
 import contactInfo from './contact_info';
 import committee from './committee';
 import committeeTerm from './committee_term';
+import race from './race';
 
 const modelInitializers = [
   official,
@@ -18,6 +19,7 @@ const modelInitializers = [
   contactInfo,
   committee,
   committeeTerm,
+  race,
 ];
 const sequelize = initializeDatabase();
 const models = initializeModels();

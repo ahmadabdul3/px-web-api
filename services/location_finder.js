@@ -31,6 +31,9 @@ import { ward30Arrays } from 'src/constants/ward_polygons/ward_30';
 import classifyPoint from 'robust-point-in-polygon';
 
 
+// - location needs to be an array not an object:
+//      [xxx.xxx, yyy.yyy] <-- this is what we want
+//   vs { lat: xxx.xxx, lng: yyy.yyy }
 export function determineWardNumberFromLocation({ location }) {
   const allWards = getAllWardPolygonArrays();
 
