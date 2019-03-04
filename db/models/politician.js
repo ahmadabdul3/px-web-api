@@ -52,14 +52,24 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   politician.findAllWithRelations = (ops) => {
+    const { Op } = models.Sequelize;
     const options = ops && ops.options;
     const officeHolderTermOptions = ops && ops.officeHolderTermOptions;
+    const officeHolderTermOptionsWhere = ops
+      && ops.officeHolderTermOptions
+      && ops.officeHolderTermOptions.where || {};
     const contactInfoOptions = ops && ops.contactInfoOptions;
     return politician.findAll({
       ...options,
       include: [{
         model: models.officeHolderTerm,
         ...officeHolderTermOptions,
+        where: {
+          ...officeHolderTermOptionsWhere,
+          testData: {
+            [Op.not]: true,
+          },
+        },
         include: [
           {
             model: models.contactInfo,

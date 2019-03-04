@@ -5,7 +5,8 @@ module.exports = (sequelize, DataTypes) => {
     titlePrimary: DataTypes.TEXT,
     titleSecondary: DataTypes.TEXT,
     levelOfResponsibility: DataTypes.TEXT,
-    areaOfResponsibility: DataTypes.TEXT
+    areaOfResponsibility: DataTypes.TEXT,
+    testData: DataTypes.BOOLEAN,
   }, {});
 
   officeHolderTerm.associate = function(models) {
