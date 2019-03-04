@@ -64,7 +64,7 @@ function createRacesForCurrentPositions() {
         areaOfResponsibility,
         position: titlePrimary,
         electionDate: new Date(),
-        currentOfficeHolder: normalizedP.id,
+        currentOfficeHolder: normalizedP.officeHolderTermId,
       };
       raceForPosition[raceKey] = newRace;
       bulkRaceData.push(newRace);

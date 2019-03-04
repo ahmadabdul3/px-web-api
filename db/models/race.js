@@ -29,7 +29,10 @@ module.exports = (sequelize, DataTypes) => {
           areaOfResponsibility: { $col: 'race.areaOfResponsibility' },
           titlePrimary: { $col: 'race.position' }
         },
-      }]
+        include: [{
+          model: models.politican
+        }],
+      }],
     });
   };
 
