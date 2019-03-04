@@ -110,9 +110,9 @@ function createCandidatesForCurrentPositions() {
       bulkCandidateData.push(newCandidateTerm);
     });
     console.log(bulkCandidateData);
-    // db.candidateTerm.bulkCreate(bulkCandidateData).then(res => {
-    //   console.log(res);
-    // });
+    db.candidateTerm.bulkCreate(bulkCandidateData).then(res => {
+      console.log(res);
+    });
   });
 }
 
