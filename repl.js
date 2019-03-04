@@ -105,7 +105,8 @@ function createCandidatesForCurrentPositions() {
         positionCurrentOfficeHolder: true,
         runningUnderParty: pol.party,
         raceId: id,
-        incumbentId: pol.officeHolderTermId
+        incumbentId: pol.officeHolderTermId,
+        politicianId: pol.id
       };
       bulkCandidateData.push(newCandidateTerm);
     });
