@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
           titlePrimary: { $col: 'race.position' }
         },
         include: [{
-          model: models.politican
+          model: models.politician
         }],
       }],
     });
