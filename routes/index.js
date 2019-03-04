@@ -4,6 +4,7 @@ import models from 'src/db/models';
 import fetch from 'node-fetch';
 import politicianRoutes from './politicians';
 import committeeTermRoutes from './committee_terms';
+import raceRoutes from './races';
 import http from 'src/services/http';
 import { determineWardNumberFromLocation } from 'src/services/location_finder';
 import { getAddressInfo } from 'src/services/address_manager';
@@ -12,6 +13,7 @@ import { getAddressInfo } from 'src/services/address_manager';
 const router = express.Router();
 router.use('/politicians', politicianRoutes);
 router.use('/committee-terms', committeeTermRoutes);
+router.use('/races', raceRoutes);
 
 router.get('/address-info', (req, res) => {
   const { address } = req.query;
