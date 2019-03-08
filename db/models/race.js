@@ -42,6 +42,9 @@ module.exports = (sequelize, DataTypes) => {
       where: {
         [models.Sequelize.Op.or]: [
           {
+            areaOfResponsibility: 'USA',
+          },
+          {
             areaOfResponsibility: city,
             levelOfResponsibility: "City",
           },
