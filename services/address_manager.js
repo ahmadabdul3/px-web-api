@@ -21,8 +21,8 @@ export function getAddressInfo({ address }) {
   }).then(resp => {
     const result = resp && resp.result;
     const addressComponents = result.address_components || {};
-    const { city, state } = getPartsFromAddress({ addressComponents });
-    return { locationId, city, state, locationCoordinates };
+    const { city, state, streetNumber, streetName } = getPartsFromAddress({ addressComponents });
+    return { locationId, city, state, streetNumber, streetName, locationCoordinates };
   });
 }
 
