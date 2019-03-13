@@ -21,18 +21,22 @@ export function getAddressInfo({ address }) {
   }).then(resp => {
     const result = resp && resp.result;
     const addressComponents = result.address_components || {};
-    const { city, state } = findCityFromAddress({ addressComponents });
+    const { city, state } = getPartsFromAddress({ addressComponents });
     return { locationId, city, state, locationCoordinates };
   });
 }
 
-function findCityFromAddress({ addressComponents }) {
+function getPartsFromAddress({ addressComponents }) {
   const cityKey = 'locality';
   const stateKey = 'administrative_area_level_1';
+  const streetNumberKey = 'street_number';
+  const streetNameKey = 'route';
 
   return addressComponents.reduce((all, c) => {
     if (c.types.includes(cityKey)) all.city = c.long_name;
     else if (c.types.includes(stateKey)) all.state = c.long_name;
+    else if (c.types.includes(streetNumberKey)) all.streetNumber = c.long_name;
+    else if (c.types.includes(streetNameKey)) all.streetName = c.long_name;
     return all;
   }, {});
 }
