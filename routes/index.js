@@ -8,12 +8,14 @@ import raceRoutes from './races';
 import http from 'src/services/http';
 import { determineWardNumberFromLocation } from 'src/services/location_finder';
 import { getAddressInfo } from 'src/services/address_manager';
+import userRoutes from './users';
 
 
 const router = express.Router();
 router.use('/politicians', politicianRoutes);
 router.use('/committee-terms', committeeTermRoutes);
 router.use('/races', raceRoutes);
+router.use('/users', userRoutes);
 
 router.get('/address-info', (req, res) => {
   const { address } = req.query;
