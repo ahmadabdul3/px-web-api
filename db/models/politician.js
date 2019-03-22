@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     politician.hasMany(models.officeHolderTerm);
     politician.hasMany(models.candidateTerm);
     politician.hasMany(models.contactInfo);
+    politician.belongsTo(models.user);
     // - we may need this relationship in the future
     //   for now we're good
     // politician.hasMany(models.committeeTerm);
@@ -64,28 +65,33 @@ module.exports = (sequelize, DataTypes) => {
     const contactInfoOptions = ops && ops.contactInfoOptions;
     return politician.findAll({
       ...options,
-      include: [{
-        model: models.officeHolderTerm,
-        ...officeHolderTermOptions,
-        where: {
-          ...officeHolderTermOptionsWhere,
-          testData: {
-            [Op.not]: true,
-          },
+      include: [
+        {
+          model: models.user,
         },
-        include: [
-          {
-            model: models.contactInfo,
-            ...contactInfoOptions,
+        {
+          model: models.officeHolderTerm,
+          ...officeHolderTermOptions,
+          where: {
+            ...officeHolderTermOptionsWhere,
+            testData: {
+              [Op.not]: true,
+            },
           },
-          {
-            model: models.committeeTerm,
-            include: [{
-              model: models.committee,
-            }],
-          }
-        ],
-      }],
+          include: [
+            {
+              model: models.contactInfo,
+              ...contactInfoOptions,
+            },
+            {
+              model: models.committeeTerm,
+              include: [{
+                model: models.committee,
+              }],
+            }
+          ],
+        }
+      ],
     });
   };
 
@@ -98,9 +104,18 @@ module.exports = (sequelize, DataTypes) => {
   politician.createWithRelations = (data) => {
     let politicianData;
     delete data.id;
+    const { firstName, lastName } = data;
+    const userData = {
+      firstName,
+      lastName,
+      role: 'politician',
+    };
 
     return sequelize.transaction(transaction => {
-      return politician.create(data, { transaction }).then(polRes => {
+      return models.user.create(userData, { transaction }).then(userRes => {
+        data.userId = userRes.dataValues.id;
+        return politician.create(data, { transaction });
+      }).then(polRes => {
         politicianData = polRes;
         const politicianId = polRes.dataValues.id;
         return models.officeHolderTerm.create({ ...data, politicianId }, { transaction });
@@ -187,6 +202,7 @@ module.exports = (sequelize, DataTypes) => {
   //   models included (officeHolderTerm and contactInfo)
   politician.normalizedForUi = (p) => {
     const pol = p.get({ plain: true });
+    const userId = pol.user && pol.user.id;
     const officeHolderTerm = pol.officeHolderTerms && pol.officeHolderTerms[0] || {};
     const contactInfo = officeHolderTerm.contactInfos && officeHolderTerm.contactInfos[0] || {};
     const committeeTerms = officeHolderTerm.committeeTerms;
@@ -209,6 +225,7 @@ module.exports = (sequelize, DataTypes) => {
       ...officeHolderTerm,
       ...contactInfo,
       committees,
+      userId,
       id: pol.id,
       officeHolderTermId: officeHolderTerm.id,
       contactInfoId: contactInfo.id,

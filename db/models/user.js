@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     auth0Id: DataTypes.TEXT,
     role: DataTypes.TEXT
   }, {});
+
   UserModel.associate = function(models) {
     // associations can be defined here
   };

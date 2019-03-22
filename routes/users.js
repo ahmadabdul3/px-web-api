@@ -17,6 +17,6 @@ function createUser(req, res) {
     res.json({ user: userRes.user, message: userRes.status });
   }).catch(e => {
     console.log('e', e);
-    res.status(402).json({ message: 'error creating user' });
+    res.status(422).json({ message: 'error creating user' });
   });
 }

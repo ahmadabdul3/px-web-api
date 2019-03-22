@@ -13,6 +13,7 @@ const invalidUiKeys = {
   officeHolderTerms: true,
   contactInfos: true,
   committeeTerms: true,
+  user: true,
 };
 
 function keyIsValidForUi(key) { return !invalidUiKeys[key]; }

@@ -1,23 +1,37 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const message = sequelize.define('message', {
+  const messageModel = sequelize.define('message', {
     id: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
-      autoIncrement: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER
     },
     title: DataTypes.TEXT,
     body: DataTypes.TEXT,
     senderId: DataTypes.UUID,
     receiverId: DataTypes.UUID,
+    // - valid statuses:
+    // - resolved
+    // - in-progress new-message
+    // - in-progress stale
+    // - new un-opened
+    // - new opened
     status: DataTypes.TEXT,
     parentId: DataTypes.INTEGER,
-    threadId: DataTypes.UUID,
+    threadId: {
+      allowNull: false,
+      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.UUID
+    },
   }, {});
-  message.associate = function(models) {
-    // associations can be defined here
+  messageModel.associate = function(models) {
+    messageModel.belongsTo(models.user, { as: 'sender', foreignKey: 'senderId' });
+    messageModel.belongsTo(models.user, { as: 'receiver', foreignKey: 'receiverId' });
+    // -  basically, when a message is sent as a reply to another message,
+    //    the reply holds the 'parentId' - which is the id of the original message
+    //    this message is replying to
+    messageModel.belongsTo(messageModel, { as: 'parent', foreignKey: 'parentId' });
   };
-  return message;
+  return messageModel;
 };
