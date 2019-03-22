@@ -187,6 +187,19 @@ export default class HomePage extends Component {
     this.setState({ [name]: value });
   }
 
+  createUser = () => {
+    http.post('/users', { user: {
+      firstName: 'abdul',
+      lastName: 'ahmad',
+      email: 'email@em.com',
+      role: 'test',
+    }}).then(res => {
+      console.log('res', res);
+    }).catch(e => {
+      console.log('e', e);
+    });
+  }
+
   render() {
     const {
       address,
@@ -241,6 +254,9 @@ export default class HomePage extends Component {
             </div>
             <button className='green-button' onClick={this.openNewOfficialModal}>
               <i className='fas fa-plus' /> New Official
+            </button>
+            <button className='green-button' onClick={this.createUser}>
+              <i className='fas fa-plus' /> Create User
             </button>
           </div>
         </header>

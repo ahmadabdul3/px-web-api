@@ -13,9 +13,10 @@ export default router;
 
 function createUser(req, res) {
   const { user } = req.body;
-  models.user.create(user).then(newUser => {
-    res.json({ user: newUser, message: 'successfully created' });
+  models.user.createOrGetExisting({ user }).then(userRes => {
+    res.json({ user: userRes.user, message: userRes.status });
   }).catch(e => {
+    console.log('e', e);
     res.status(402).json({ message: 'error creating user' });
   });
 }
