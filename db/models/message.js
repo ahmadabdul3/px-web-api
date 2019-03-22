@@ -1,4 +1,6 @@
 'use strict';
+import { messageStatus } from 'src/constants/messaging';
+
 module.exports = (sequelize, DataTypes) => {
   const messageModel = sequelize.define('message', {
     id: {
@@ -17,13 +19,26 @@ module.exports = (sequelize, DataTypes) => {
     // - in-progress stale
     // - new un-opened
     // - new opened
-    status: DataTypes.TEXT,
+    status: {
+      type: DataTypes.TEXT,
+      defaultValue: messageStatus.NEW_UNOPENED,
+    },
     parentId: DataTypes.INTEGER,
     threadId: {
       allowNull: false,
       defaultValue: DataTypes.UUIDV4,
       type: DataTypes.UUID
     },
+    threadCreatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: new Date(),
+    },
+    createdAt: {
+      type: DataTypes.DATE
+    },
+    updatedAt: {
+      type: DataTypes.DATE
+    }
   }, {});
   messageModel.associate = function(models) {
     messageModel.belongsTo(models.user, { as: 'sender', foreignKey: 'senderId' });
@@ -33,5 +48,19 @@ module.exports = (sequelize, DataTypes) => {
     //    this message is replying to
     messageModel.belongsTo(messageModel, { as: 'parent', foreignKey: 'parentId' });
   };
+
+  messageModel.getLatestForAllThreads = ({ userId }) => {
+    const query = `\
+      SELECT DISTINCT ON ("threadId") *\
+      FROM messages\
+      WHERE "senderId"='${userId}'\
+      OR "receiverId"='${userId}'\
+      ORDER BY "threadId", "createdAt" DESC;\
+    `;
+    return sequelize.query(query).then(result => {
+      return result[0];
+    });
+  };
+
   return messageModel;
 };
