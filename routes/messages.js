@@ -9,7 +9,7 @@ export default router;
 
 function getMessages(req, res) {
   const { userId } = req.query;
-  models.message.getLatestForAllThreads().then(messageRes => {
+  models.message.getLatestForAllThreads({ userId }).then(messageRes => {
     res.json({ messageData: messageRes, message: 'success' });
   }).catch(e => {
     console.log('e', e);
