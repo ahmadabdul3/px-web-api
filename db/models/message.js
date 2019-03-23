@@ -29,10 +29,6 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
       type: DataTypes.UUID
     },
-    threadCreatedAt: {
-      type: DataTypes.DATE,
-      defaultValue: new Date(),
-    },
     createdAt: {
       type: DataTypes.DATE
     },

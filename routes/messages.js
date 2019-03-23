@@ -19,6 +19,15 @@ function getMessages(req, res) {
 
 function createMessage(req, res) {
   const { message } = req.body;
+  if (
+    !message.senderId
+    || !message.receiverId
+    || !message.title
+    || !message.body
+  ) {
+    res.status(422).json({ message: 'error creating message' });
+    return;
+  }
   models.message.create(message).then(messageRes => {
     res.json({ messageData: messageRes, message: 'success' });
   }).catch(e => {
