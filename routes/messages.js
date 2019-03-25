@@ -3,6 +3,7 @@ const router = express.Router();
 import models from 'src/db/models';
 
 router.get('/', getMessages);
+router.get('/thread/:threadId', getMessagesForThread);
 router.post('/', createMessage);
 
 export default router;
@@ -10,6 +11,16 @@ export default router;
 function getMessages(req, res) {
   const { userId } = req.query;
   models.message.getLatestForAllThreads({ userId }).then(messageRes => {
+    res.json({ messageData: messageRes, message: 'success' });
+  }).catch(e => {
+    console.log('e', e);
+    res.status(422).json({ message: 'error fetching messages' });
+  });
+}
+
+function getMessagesForThread(req, res) {
+  const { threadId } = req.params;
+  models.message.getForThread({ threadId }).then(messageRes => {
     res.json({ messageData: messageRes, message: 'success' });
   }).catch(e => {
     console.log('e', e);

@@ -1,5 +1,6 @@
 'use strict';
 import { messageStatus } from 'src/constants/messaging';
+import models from 'src/db/models';
 
 module.exports = (sequelize, DataTypes) => {
   const messageModel = sequelize.define('message', {
@@ -63,6 +64,40 @@ module.exports = (sequelize, DataTypes) => {
     `;
     return sequelize.query(query).then(result => {
       return result[0];
+    });
+  };
+
+  messageModel.getForThread = ({ threadId }) => {
+    return messageModel.findAll({
+      where: { threadId },
+      order: [['createdAt', 'DESC']],
+      include: [
+        { model: models.user, as: 'sender' },
+        { model: models.user, as: 'receiver' },
+      ],
+    }).then(messagesRes => {
+      return messagesRes.map(messageRaw => {
+        const senderRaw = messageRaw.dataValues.sender.dataValues;
+        const receiverRaw = messageRaw.dataValues.receiver.dataValues;
+        const sender = Object.keys(senderRaw).reduce((all, k) => {
+          const key = k.charAt(0).toUpperCase() + k.slice(1);
+          all['sender' + key] = senderRaw[k];
+          return all;
+        }, {});
+        const receiver = Object.keys(receiverRaw).reduce((all, k) => {
+          const key = k.charAt(0).toUpperCase() + k.slice(1);
+          all['receiver' + key] = receiverRaw[k];
+          return all;
+        }, {});
+
+        return {
+          ...messageRaw.dataValues,
+          ...sender,
+          ...receiver,
+          sender: undefined,
+          receiver: undefined,
+        };
+      });
     });
   };
 
