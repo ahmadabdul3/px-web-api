@@ -8,7 +8,7 @@ export function authenticateLenient(req, res, next) {
     req.auth0Id = response.decoded.sub;
     next();
   }).catch((response) => {
-    console.log('response', response);
+    console.log('response in lenient: ', response);
     const { error } = response;
     if (error.name === ERROR_NO_AUTH_HEADER) {
       res.status(401).json({ message: 'user not logged in' });
@@ -57,6 +57,7 @@ function authenticate(req, res) {
     const token = authorization.split(' ')[1];
     const cert = process.env.ACCESS_TOKEN_CERTIFICATE.replace(/\\n/g, '\n');
     jwt.verify(token, cert, { algorithms: ['RS256'] }, (error, decoded) => {
+      console.log('error in jwt verify: ', error);
       if (error) reject({ error, decoded });
       else resolve({ error, decoded });
     });
