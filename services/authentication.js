@@ -8,6 +8,7 @@ export function authenticateLenient(req, res, next) {
     req.auth0Id = response.decoded.sub;
     next();
   }).catch((response) => {
+    console.log('response', response);
     const { error } = response;
     if (error.name === ERROR_NO_AUTH_HEADER) {
       res.status(401).json({ message: 'user not logged in' });
