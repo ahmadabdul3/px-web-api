@@ -48,19 +48,22 @@ module.exports = (sequelize, DataTypes) => {
 
   messageModel.getLatestForAllThreads = ({ userId }) => {
     const query = `\
-      SELECT DISTINCT ON (messages."threadId") messages.*,\
-      us."firstName" AS "senderFirstName",\
-      us."lastName" AS "senderLastName",\
-      us.id AS "senderId",\
-      ur."firstName" AS "receiverFirstName",\
-      ur."lastName" AS "receiverLastName",\
-      ur.id AS "receiverId"\
-      FROM messages\
-      JOIN users us ON messages."senderId" = us.id\
-      JOIN users ur ON messages."receiverId" = ur.id\
-      WHERE "senderId"='${userId}'\
-      OR "receiverId"='${userId}'\
-      ORDER BY "threadId", "createdAt" DESC;\
+      SELECT * FROM (\
+        SELECT DISTINCT ON (messages."threadId") messages.*,\
+        us."firstName" AS "senderFirstName",\
+        us."lastName" AS "senderLastName",\
+        us.id AS "senderId",\
+        ur."firstName" AS "receiverFirstName",\
+        ur."lastName" AS "receiverLastName",\
+        ur.id AS "receiverId"\
+        FROM messages\
+        JOIN users us ON messages."senderId" = us.id\
+        JOIN users ur ON messages."receiverId" = ur.id\
+        WHERE "senderId"='${userId}'\
+        OR "receiverId"='${userId}'\
+        ORDER BY "threadId", "createdAt" DESC\
+      ) p\
+      ORDER BY "createdAt" DESC;
     `;
     return sequelize.query(query).then(result => {
       return result[0];
