@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
       JOIN users ur ON messages."receiverId" = ur.id\
       WHERE "senderId"='${userId}'\
       OR "receiverId"='${userId}'\
-      ORDER BY "threadId", "createdAt" DESC;\
+      ORDER BY "createdAt", "threadId" DESC;\
     `;
     return sequelize.query(query).then(result => {
       return result[0];
