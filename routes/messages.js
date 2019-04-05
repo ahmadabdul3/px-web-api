@@ -49,6 +49,8 @@ function createMessage(req, res) {
     return;
   }
   models.message.create(message).then(messageRes => {
+    return models.message.getLatestForAllThreads({ userId: senderId });
+  }).then(messageRes => {
     res.json({ messageData: messageRes, message: 'success' });
   }).catch(e => {
     console.log('e', e);
