@@ -63,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
         OR "receiverId"='${userId}'\
         ORDER BY "threadId", "createdAt" DESC\
       ) p\
-      ORDER BY "createdAt" DESC;
+      ORDER BY "createdAt" DESC;\
     `;
     return sequelize.query(query).then(result => {
       return result[0];
@@ -80,8 +80,8 @@ module.exports = (sequelize, DataTypes) => {
       ],
     }).then(messagesRes => {
       return messagesRes.map(messageRaw => {
-        const senderRaw = messagesRes.dataValues.sender.dataValues;
-        const receiverRaw = messagesRes.dataValues.receiver.dataValues;
+        const senderRaw = messageRaw.dataValues.sender.dataValues;
+        const receiverRaw = messageRaw.dataValues.receiver.dataValues;
         const sender = Object.keys(senderRaw).reduce((all, k) => {
           const key = k.charAt(0).toUpperCase() + k.slice(1);
           all['sender' + key] = senderRaw[k];
@@ -94,7 +94,7 @@ module.exports = (sequelize, DataTypes) => {
         }, {});
 
         return {
-          ...messagesRes.dataValues,
+          ...messageRaw.dataValues,
           ...sender,
           ...receiver,
           sender: undefined,
