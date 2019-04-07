@@ -4,11 +4,12 @@ import {
   isSequelizeError,
   makeErrorsFriendly
 } from 'src/services/sequelize_error_transformer';
+import { authenticateStrict } from 'src/services/authentication';
 
 const router = express.Router();
 
-router.get('/', getCommitteeTerms);
-router.post('/', createCommitteeTerm);
+router.get('/', authenticateStrict, getCommitteeTerms);
+router.post('/', authenticateStrict, createCommitteeTerm);
 
 export default router;
 

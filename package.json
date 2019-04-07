@@ -11,6 +11,7 @@
     "test-watch": "mocha-webpack --watch \"./frontend/test/**/*.test.js\" --webpack-config webpack-test.config.js --require ./frontend/test/setup.js"
   },
   "dependencies": {
+    "auth0-js": "^9.10.1",
     "connected-react-router": "^4.3.0",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.5",

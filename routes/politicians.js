@@ -1,6 +1,7 @@
 import express from 'express';
 import models from 'src/db/models';
 import { getAddressInfo } from 'src/services/address_manager';
+import { authenticateStrict } from 'src/services/authentication';
 
 const { politician } = models;
 const router = express.Router();
@@ -8,8 +9,8 @@ const router = express.Router();
 router.get('/', getPoliticians);
 // router.get('/address/:address', getPoliticiansForAddress);
 router.get('/location', getPoliticiansForLocation);
-router.post('/', createPolitician);
-router.put('/', updatePolitician);
+router.post('/', authenticateStrict, createPolitician);
+router.put('/', authenticateStrict, updatePolitician);
 
 export default router;
 

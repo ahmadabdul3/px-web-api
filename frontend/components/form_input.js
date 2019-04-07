@@ -11,7 +11,7 @@ export default class FormInput extends PureComponent {
     if (this.props.autoFocus) this.focusInput();
     else {
       setTimeout(() => {
-        if (this.inputRef.value) this.setState({ active: true });
+        if (this.inputRef && this.inputRef.value) this.setState({ active: true });
       }, 200);
     }
   }

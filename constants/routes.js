@@ -1,5 +1,5 @@
 const appRoutes = {
-  home: '/',
+  home: '/home',
   login: '/login',
   signup: '/signup',
 };

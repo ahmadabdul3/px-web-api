@@ -14,6 +14,7 @@ import {
 import FormSelect from 'src/frontend/components/form_select';
 
 export default class HomePage extends Component {
+  mounted = false;
   state = {
     loading: false,
     newOfficialModalOpen: false,
@@ -30,12 +31,21 @@ export default class HomePage extends Component {
   }
 
   componentDidMount() {
+    this.mounted = true;
     http.get('/politicians').then(res => {
       const { politicians, committees } = this.getPoliticiansAndCommittees(res.politicians);
-      this.setState({ politicians, committees, error: '' });
+      this.setStateSafe({ politicians, committees, error: '' });
     }).catch(err => {
-      this.setState({ error: 'error' });
+      this.setStateSafe({ error: 'error' });
     });
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
+  }
+
+  setStateSafe(newState) {
+    if (this.mounted) this.setState(newState);
   }
 
   // - don't need to worry about committees with a new politician because
@@ -46,24 +56,24 @@ export default class HomePage extends Component {
   addPolitician = (p) => {
     const { politicians } = this.state;
     politicians[p.id] = p;
-    this.setState({ politicians });
+    this.setStateSafe({ politicians });
   }
 
   updatePolitician = (p) => {
     const { politicians } = this.state;
     politicians[p.id] = p;
-    this.setState({ politicians });
+    this.setStateSafe({ politicians });
   }
 
   openEditOfficeHolderModal = (politicianForEdit) => {
-    this.setState({
+    this.setStateSafe({
       editOfficeHolderModalOpen: true,
       politicianForEdit,
     });
   }
 
   closeEditOfficeHolderModal = (p) => {
-    this.setState({
+    this.setStateSafe({
       editOfficeHolderModalOpen: false,
       politicianForEdit: undefined,
     });
@@ -91,11 +101,11 @@ export default class HomePage extends Component {
   }
 
   openNewOfficialModal = () => {
-    this.setState({ newOfficialModalOpen: true });
+    this.setStateSafe({ newOfficialModalOpen: true });
   }
 
   closeNewOfficialModal = () => {
-    this.setState({ newOfficialModalOpen: false });
+    this.setStateSafe({ newOfficialModalOpen: false });
   }
 
   saveNewCommitteeTerm = (newCommitteeTerm) => {
@@ -103,7 +113,7 @@ export default class HomePage extends Component {
     const politicianId = politicianForNewCommitteeTerm.id;
     const committeesForPolitician = [ ...committees[politicianId], newCommitteeTerm ];
 
-    this.setState({
+    this.setStateSafe({
       committees: { ...committees, [politicianId]: committeesForPolitician },
       politicianForNewCommitteeTerm: undefined,
       newCommitteeTermModalOpen: false,
@@ -111,14 +121,14 @@ export default class HomePage extends Component {
   }
 
   openNewCommitteeTermModal = (politicianForNewCommitteeTerm) => {
-    this.setState({
+    this.setStateSafe({
       politicianForNewCommitteeTerm,
       newCommitteeTermModalOpen: true,
     });
   }
 
   closeNewCommitteeTermModal = () => {
-    this.setState({
+    this.setStateSafe({
       politicianForNewCommitteeTerm: undefined,
       newCommitteeTermModalOpen: false,
     });
@@ -144,13 +154,13 @@ export default class HomePage extends Component {
 
     http.get('/address?address=' + address).then((res) => {
       console.log('RESPONSE', res);
-      if (res.status === 'err') this.setState({ addressResult: { wardNumber: 'not found' } });
-      else this.setState({ addressResult: res.locationRes });
+      if (res.status === 'err') this.setStateSafe({ addressResult: { wardNumber: 'not found' } });
+      else this.setStateSafe({ addressResult: res.locationRes });
     });
   }
 
   updateAddress = ({ name, value }) => {
-    this.setState({ address: value });
+    this.setStateSafe({ address: value });
   }
 
   politicianIsFiltered(p, filter) {
@@ -184,7 +194,7 @@ export default class HomePage extends Component {
   }
 
   changeHeaderFilter = ({ name, value }) => {
-    this.setState({ [name]: value });
+    this.setStateSafe({ [name]: value });
   }
 
   render() {
