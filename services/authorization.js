@@ -8,7 +8,7 @@ export default class Auth {
   auth0 = new auth0.WebAuth({
     domain: 'politixentral.auth0.com',
     clientID: 'rTI55EvbmYoA3QNBhpgvEefVy4Q7pUFE',
-    redirectUri: 'http://localhost:3000/auth-redirect',
+    redirectUri: 'http://px-staging.herokuapp.com/auth-redirect',
     responseType: 'token id_token',
     scope: 'openid',
     prompt: 'none',
