@@ -37,6 +37,7 @@ function handleLenientTokenExpired({ req, res }) {
     req.user = user;
     next();
   }).catch(e => {
+    console.log('error handle lenient', e);
     res.status(401).json({ error: e, message: 'Forbidden' });
   });
 }
