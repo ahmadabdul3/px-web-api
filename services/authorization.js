@@ -1,14 +1,16 @@
 import auth0 from 'auth0-js';
 import history from 'src/services/browser_history';
 
-export default class Auth {
+class Auth {
   accessToken;
   idToken;
   expiresAt;
   auth0 = new auth0.WebAuth({
+    audience: 'https://data-api.politixentral.com',
     domain: 'politixentral.auth0.com',
     clientID: 'rTI55EvbmYoA3QNBhpgvEefVy4Q7pUFE',
     redirectUri: 'http://px-staging.herokuapp.com/auth-redirect',
+    // redirectUri: 'http://localhost:3000/auth-redirect',
     responseType: 'token id_token',
     scope: 'openid',
     prompt: 'none',
@@ -25,7 +27,7 @@ export default class Auth {
       } else if (err) {
         history.replace('/loading');
         console.log(err);
-        alert(`Error: ${err.error}. Check the console for further details.`);
+        console.error(`Error: ${err.error}. Check the console for further details.`);
       }
     });
   }
@@ -41,6 +43,7 @@ export default class Auth {
   setSession = (authResult) => {
     // Set isLoggedIn flag in localStorage
     localStorage.setItem('PX_LOGGED_IN', 'true');
+    console.log('authResult.accessToken', authResult.accessToken);
 
     // Set the time that the access token will expire at
     let expiresAt = (authResult.expiresIn * 1000) + new Date().getTime();
@@ -85,3 +88,6 @@ export default class Auth {
     return this.expiresAt && new Date().getTime() < this.expiresAt;
   }
 }
+
+const authSingleton = new Auth();
+export default authSingleton;

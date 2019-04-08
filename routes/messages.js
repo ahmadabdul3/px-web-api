@@ -48,12 +48,32 @@ function createMessage(req, res) {
     res.status(422).json({ message: 'error creating message' });
     return;
   }
-  models.message.create(message).then(messageRes => {
+
+  Promise.resolve().then(() => {
+    if (message.parentId) return models.message.create(message);
+    return validateNumOfMessages({ req });
+  }).then(messageRes => {
     return models.message.getLatestForAllThreads({ userId: message.senderId });
   }).then(messageRes => {
     res.json({ messageData: messageRes, message: 'success' });
   }).catch(e => {
     console.log('e', e);
-    res.status(422).json({ message: 'error creating message' });
+    res.status(422).json({ error: e, message: 'error creating message' });
+  });
+}
+
+function validateNumOfMessages({ req }) {
+  return models.message.findAll({
+    limit: 3,
+    where: { senderId: req.user.id, parentId: { $eq: null } },
+    order: [[ 'createdAt', 'DESC' ]]
+  }).then(messages => {
+    let numMessagesSent = 0;
+    const thisMonth = (new Date()).getMonth();
+    messages.forEach(message => {
+      if (message.dataValues.createdAt.getMonth() === thisMonth) numMessagesSent++;
+    });
+    if (numMessagesSent > 2) throw({ name: 'MessageLimitReached', message: 'message limit reached' });
+    return models.message.create(message);
   });
 }

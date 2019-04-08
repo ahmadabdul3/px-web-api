@@ -14,8 +14,8 @@ import Navigation from 'src/frontend/components/navigation';
 import AppBodyContainer from 'src/frontend/containers/app_body_container';
 import { Route, Redirect } from 'react-router-dom';
 import history from 'src/services/browser_history';
-import Auth from 'src/services/authorization';
-const auth = new Auth();
+import auth from 'src/services/authorization';
+// const auth = new Auth();
 
 const store = createStore(
   connectRouter(history)(reducer), // new root reducer with router state

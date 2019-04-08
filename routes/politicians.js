@@ -6,7 +6,7 @@ import { authenticateStrict } from 'src/services/authentication';
 const { politician } = models;
 const router = express.Router();
 
-router.get('/', getPoliticians);
+router.get('/', authenticateStrict, getPoliticians);
 // router.get('/address/:address', getPoliticiansForAddress);
 router.get('/location', getPoliticiansForLocation);
 router.post('/', authenticateStrict, createPolitician);

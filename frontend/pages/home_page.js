@@ -6,6 +6,7 @@ import EditOfficeHolderModal from 'src/frontend/components/edit_office_holder_mo
 import http from 'src/frontend/services/http';
 import PoliticianSummaryCard from 'src/frontend/components/politician_summary_card';
 import FormInput from 'src/frontend/components/form_input';
+import auth from 'src/services/authorization';
 
 import {
   generateValidationStateForForm,
@@ -32,7 +33,9 @@ export default class HomePage extends Component {
 
   componentDidMount() {
     this.mounted = true;
-    http.get('/politicians').then(res => {
+    http.get('/politicians', {
+      authorization: 'bearer ' + auth.accessToken
+    }).then(res => {
       const { politicians, committees } = this.getPoliticiansAndCommittees(res.politicians);
       this.setStateSafe({ politicians, committees, error: '' });
     }).catch(err => {
