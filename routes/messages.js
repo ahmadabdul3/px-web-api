@@ -51,7 +51,7 @@ function createMessage(req, res) {
 
   Promise.resolve().then(() => {
     if (message.parentId) return models.message.create(message);
-    return validateNumOfMessages({ req });
+    return validateNumOfMessages({ req, message });
   }).then(messageRes => {
     return models.message.getLatestForAllThreads({ userId: message.senderId });
   }).then(messageRes => {
@@ -68,7 +68,7 @@ function createMessage(req, res) {
   });
 }
 
-function validateNumOfMessages({ req }) {
+function validateNumOfMessages({ req, message }) {
   return models.message.findAll({
     limit: 3,
     where: { senderId: req.user.id, parentId: { $eq: null } },
