@@ -19,7 +19,7 @@ export function authenticateLenient(req, res, next) {
       res.status(401).json({ message: 'Forbidden' });
       return;
     } else if (error.name === ERROR_TOKEN_EXPIRED) {
-      handleLenientTokenExpired({ req, res });
+      handleLenientTokenExpired({ req, res, next });
       return;
     }
 
@@ -28,7 +28,7 @@ export function authenticateLenient(req, res, next) {
   });
 }
 
-function handleLenientTokenExpired({ req, res }) {
+function handleLenientTokenExpired({ req, res, next }) {
   const token = req.headers.authorization.split(' ')[1];
   const decoded = jwt.decode(token);
   fetchUser({ auth0Id: decoded.sub }).then(user => {
