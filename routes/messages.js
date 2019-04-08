@@ -60,9 +60,9 @@ function createMessage(req, res) {
     console.log('e', e);
     const responseToClient = { error: e, message: 'error creating message' };
     if (e.name === 'MessageLimitReached') {
-      responseToClient.friendlyMessage = `You've reached the monthly cap of 3 'new' messages.`
-        + ` However, you can continue sending messages in conversations that you've already started`
-        + ` in your messages page.`;
+      responseToClient.friendlyMessage = `You've reached the limit of 3 'new' messages per month.`
+        + ` Please wait until next month to send more messages.`
+        + ` In the meantime, you can continue replying to conversations in your messages page.`;
     }
     res.status(422).json(responseToClient);
   });
