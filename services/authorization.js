@@ -9,7 +9,7 @@ class Auth {
     audience: 'https://data-api.politixentral.com',
     domain: 'politixentral.auth0.com',
     clientID: 'rTI55EvbmYoA3QNBhpgvEefVy4Q7pUFE',
-    redirectUri: 'http://px-staging.herokuapp.com/auth-redirect',
+    redirectUri: 'https://px-staging.herokuapp.com/auth-redirect',
     // redirectUri: 'http://localhost:3000/auth-redirect',
     responseType: 'token id_token',
     scope: 'openid',
