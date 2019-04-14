@@ -39,15 +39,20 @@ module.exports = (sequelize, DataTypes) => {
           },
           {
             areaOfResponsibility: city,
-            levelOfResponsibility: "City",
+            levelOfResponsibility: 'City',
           },
           {
             areaOfResponsibility: state,
-            levelOfResponsibility: "State",
+            levelOfResponsibility: 'State',
           },
           {
             areaOfResponsibility: district,
-            levelOfResponsibility: "District",
+            levelOfResponsibility: 'District',
+          },
+          {
+            levelOfResponsibility: 'District',
+            titlePrimary: 'Alder',
+            titleSecondary: 'Board President',
           }
         ]
       }
