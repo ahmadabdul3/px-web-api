@@ -23,7 +23,6 @@ export default class PoliticianSummaryCard extends PureComponent {
     if (suffix) fullName += `, ${suffix}`;
     const politicalTitle = `${titlePrimary}, ${levelOfResponsibility} ${areaOfResponsibility} - ${party}`;
     const politicianPhoto = photoUrl || 'https://circuitmaker.com/Content/Images/Avatars/unknown_avatar180.png';
-    console.log('photourl', photoUrl);
 
     return (
       <div key={politician.id} className='politician-summary-card'>
