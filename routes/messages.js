@@ -3,9 +3,9 @@ const router = express.Router();
 import models from 'src/db/models';
 import { authenticateLenient } from 'src/services/authentication';
 
-router.get('/', authenticateLenient, getMessages);
-router.get('/thread/:threadId', authenticateLenient, getMessagesForThread);
-router.post('/', authenticateLenient, createMessage);
+router.get('/', authenticateLenient(), getMessages);
+router.get('/thread/:threadId', authenticateLenient(), getMessagesForThread);
+router.post('/', authenticateLenient(), createMessage);
 
 export default router;
 

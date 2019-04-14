@@ -65,26 +65,32 @@ class AuthorizationWrapper extends Component {
           else if (pathname === '/auth-redirect') return null;
           return <Redirect to='/loading' />;
         }} />
-        <Route path='/loading' component={() => (
-          <div style={{
-            marginTop: 30,
-            marginBottom: 30,
-            marginRight: 'auto',
-            marginLeft: 'auto',
-            width: 300,
-            borderRadius: 5,
-            border: '1px solid rgba(0, 0, 0, 0.1)',
-            padding: 50,
-            background: 'white',
-          }}>
-            Loading...
-          </div>
-        )} />
+        <Route path='/loading' component={() => <LoadingDiv />} />
         <Route path='/auth-redirect' render={(props) => {
           this.handleAuthentication(props);
-          return (<div>Loading...</div>);
+          return (<LoadingDiv />);
         }}/>
       </Fragment>
+    );
+  }
+}
+
+class LoadingDiv extends PureComponent {
+  render() {
+    return (
+      <div style={{
+        marginTop: 30,
+        marginBottom: 30,
+        marginRight: 'auto',
+        marginLeft: 'auto',
+        width: 300,
+        borderRadius: 5,
+        border: '1px solid rgba(0, 0, 0, 0.1)',
+        padding: 50,
+        background: 'white',
+      }}>
+        Loading...
+      </div>
     );
   }
 }

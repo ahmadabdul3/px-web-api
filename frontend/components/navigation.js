@@ -3,10 +3,6 @@ import { NavLink } from 'react-router-dom';
 import appRoutes from 'src/constants/routes';
 
 export default class Navigation extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   logout = () => {
     const { clearUser } = this.props;
     localStorage.removeItem('jwt-token');

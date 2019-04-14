@@ -8,8 +8,8 @@ import { authenticateStrict } from 'src/services/authentication';
 
 const router = express.Router();
 
-router.get('/', authenticateStrict, getCommitteeTerms);
-router.post('/', authenticateStrict, createCommitteeTerm);
+router.get('/', authenticateStrict(['admin:full']), getCommitteeTerms);
+router.post('/', authenticateStrict(['admin:full']), createCommitteeTerm);
 
 export default router;
 

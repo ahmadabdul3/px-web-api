@@ -7,6 +7,7 @@ import http from 'src/frontend/services/http';
 import PoliticianSummaryCard from 'src/frontend/components/politician_summary_card';
 import FormInput from 'src/frontend/components/form_input';
 import auth from 'src/services/authorization';
+import dataApiClient from 'src/frontend/clients/data_api/data_api_client';
 
 import {
   generateValidationStateForForm,
@@ -33,9 +34,7 @@ export default class HomePage extends Component {
 
   componentDidMount() {
     this.mounted = true;
-    http.get('/politicians', {
-      authorization: 'bearer ' + auth.accessToken
-    }).then(res => {
+    dataApiClient.get('/politicians').then(res => {
       const { politicians, committees } = this.getPoliticiansAndCommittees(res.politicians);
       this.setStateSafe({ politicians, committees, error: '' });
     }).catch(err => {
@@ -83,7 +82,7 @@ export default class HomePage extends Component {
   }
 
   editPolitician = (p) => {
-    console.log('p', p);
+    // console.log('p', p);
   }
 
   getPoliticiansAndCommittees(rawPoliticians) {
@@ -350,7 +349,7 @@ class NewCommitteeTermForm extends PureComponent {
     const values = committeeTermModel({
       ...this.state, ...this.splitCommitteeValues, officeHolderTermId
     });
-    http.post('/committee-terms', values).then(res => {
+    dataApiClient.post('/committee-terms', values).then(res => {
       saveNewCommitteeTerm({
         committeeTermId: res.committeeTerm.id,
         committeeTermTitle: res.committeeTerm.title,

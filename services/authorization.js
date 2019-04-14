@@ -26,8 +26,8 @@ class Auth {
         this.setSession(authResult);
       } else if (err) {
         history.replace('/loading');
-        console.log(err);
-        console.error(`Error: ${err.error}. Check the console for further details.`);
+        // console.log(err);
+        // console.error(`Error: ${err.error}. Check the console for further details.`);
       }
     });
   }
@@ -43,7 +43,7 @@ class Auth {
   setSession = (authResult) => {
     // Set isLoggedIn flag in localStorage
     localStorage.setItem('PX_LOGGED_IN', 'true');
-    console.log('authResult.accessToken', authResult.accessToken);
+    // console.log('authResult.accessToken', authResult.accessToken);
 
     // Set the time that the access token will expire at
     let expiresAt = (authResult.expiresIn * 1000) + new Date().getTime();
@@ -61,8 +61,8 @@ class Auth {
          this.setSession(authResult);
        } else if (err) {
          this.logout();
-         console.log(err);
-         alert(`Could not get a new token (${err.error}: ${err.error_description}).`);
+         // console.log(err);
+         // alert(`Could not get a new token (${err.error}: ${err.error_description}).`);
        }
     });
   }

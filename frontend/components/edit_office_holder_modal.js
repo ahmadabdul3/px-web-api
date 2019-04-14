@@ -4,6 +4,7 @@ import FormSelect, { FormSelectState } from 'src/frontend/components/form_select
 import http from 'src/frontend/services/http';
 import OfficeHolderForm from 'src/frontend/components/office_holder_form';
 import officeHolderModel from 'src/frontend/constants/office_holder_model';
+import dataApiClient from 'src/frontend/clients/data_api/data_api_client';
 import {
   validateDataSanity,
   validateInputs
@@ -32,7 +33,7 @@ export default class EditOfficeHolderModal extends PureComponent {
     this.setState(validationResult);
     if (!validationResult.formValid) return;
 
-    http.put('/politicians', officeHolderModel(this.state)).then(res => {
+    dataApiClient.put('/politicians', officeHolderModel(this.state)).then(res => {
       this.setState({ formMessage: 'Successfully updated official' });
       this.props.updatePolitician(res.politician);
       // console.log(res);
