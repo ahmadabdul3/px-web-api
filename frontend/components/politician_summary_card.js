@@ -17,9 +17,13 @@ export default class PoliticianSummaryCard extends PureComponent {
       titlePrimary,
       party,
       missionStatement,
+      photoUrl
     } = politician;
-    const fullName = `${firstName} ${middleName} ${lastName}, ${suffix}`;
+    let fullName = `${firstName} ${middleName} ${lastName}`;
+    if (suffix) fullName += `, ${suffix}`;
     const politicalTitle = `${titlePrimary}, ${levelOfResponsibility} ${areaOfResponsibility} - ${party}`;
+    const politicianPhoto = photoUrl || 'https://circuitmaker.com/Content/Images/Avatars/unknown_avatar180.png';
+    console.log('photourl', photoUrl);
 
     return (
       <div key={politician.id} className='politician-summary-card'>
@@ -27,11 +31,17 @@ export default class PoliticianSummaryCard extends PureComponent {
           <i className='fas fa-pencil-alt' />
           Edit
         </div>
-        <div className='name'>
-          { fullName }
-        </div>
-        <div>
-          { politicalTitle }
+        <div className='name-title-photo-wrapper'>
+          <div className='photo' style={{ backgroundImage: `url(${politicianPhoto})`}}>
+          </div>
+          <div className='name-title'>
+            <div className='name'>
+              { fullName }
+            </div>
+            <div>
+              { politicalTitle }
+            </div>
+          </div>
         </div>
         <div className='contact-info'>
           <ContactInfo politician={politician} />

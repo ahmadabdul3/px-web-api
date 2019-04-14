@@ -12,7 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     lastName: DataTypes.TEXT,
     email: DataTypes.TEXT,
     auth0Id: DataTypes.TEXT,
-    role: DataTypes.TEXT
+    role: DataTypes.TEXT,
+    photoUrl: DataTypes.TEXT,
   }, {});
 
   UserModel.associate = function(models) {

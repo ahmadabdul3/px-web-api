@@ -179,7 +179,7 @@ module.exports = (sequelize, DataTypes) => {
     }).then(result => {
       return politician.findOneWithRelations({ id });
     }).then(politicianWithRelations => {
-      console.log('politicianWithRelations', politicianWithRelations);
+      // console.log('politicianWithRelations', politicianWithRelations);
       return politician.normalizedForUi(politicianWithRelations);
     }).catch(err => {
       console.log('POLITICIAN TRANSACTION ERROR - createWithRelations ***', err);
@@ -212,7 +212,8 @@ module.exports = (sequelize, DataTypes) => {
   //   models included (officeHolderTerm and contactInfo)
   politician.normalizedForUi = (p) => {
     const pol = p.get({ plain: true });
-    const userId = pol.user && pol.user.id;
+    const user = pol.user || {};
+    const userId = user.id;
     const officeHolderTerm = pol.officeHolderTerms && pol.officeHolderTerms[0] || {};
     const contactInfo = officeHolderTerm.contactInfos && officeHolderTerm.contactInfos[0] || {};
     const committeeTerms = officeHolderTerm.committeeTerms;
@@ -231,6 +232,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     return prepPoliticianModelForUi({
+      ...user,
       ...pol,
       ...officeHolderTerm,
       ...contactInfo,
