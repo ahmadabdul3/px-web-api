@@ -52,9 +52,11 @@ module.exports = (sequelize, DataTypes) => {
         SELECT DISTINCT ON (messages."threadId") messages.*,\
         us."firstName" AS "senderFirstName",\
         us."lastName" AS "senderLastName",\
+        us."photoUrl" AS "senderPhotoUrl",\
         us.id AS "senderId",\
         ur."firstName" AS "receiverFirstName",\
         ur."lastName" AS "receiverLastName",\
+        ur."photoUrl" AS "receiverPhotoUrl",\
         ur.id AS "receiverId"\
         FROM messages\
         JOIN users us ON messages."senderId" = us.id\
