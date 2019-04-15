@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   race.associate = function(models) {
     race.belongsTo(models.officeHolderTerm, { foreignKey: 'currentOfficeHolder' });
+    race.hasMany(models.candidateTerm);
   };
 
   // - need to add an association between race and officeHolderTerm
@@ -22,17 +23,24 @@ module.exports = (sequelize, DataTypes) => {
     const options = ops && ops.options;
     return race.findAll({
       ...options,
-      include: [{
-        model: models.officeHolderTerm,
-        where: {
-          levelOfResponsibility: { $col: 'race.levelOfResponsibility' },
-          areaOfResponsibility: { $col: 'race.areaOfResponsibility' },
-          titlePrimary: { $col: 'race.position' }
+      include: [
+        {
+          model: models.officeHolderTerm,
+          where: {
+            levelOfResponsibility: { $col: 'race.levelOfResponsibility' },
+            areaOfResponsibility: { $col: 'race.areaOfResponsibility' },
+            titlePrimary: { $col: 'race.position' }
+          },
+          include: [{ model: models.politician }],
         },
-        include: [{
-          model: models.politician
-        }],
-      }],
+        {
+          model: models.candidateTerm,
+          include: [{
+            model: models.politician,
+            include: [{ model: models.user }]
+          }],
+        },
+      ],
     });
   };
 
