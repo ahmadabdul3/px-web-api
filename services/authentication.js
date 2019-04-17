@@ -44,6 +44,12 @@ function handleLenientTokenExpired({ req, res, next, allowedClaims }) {
   });
 }
 
+export function getUserFromAuthToken({ req }) {
+  const token = req.headers.authorization.split(' ')[1];
+  const decoded = jwt.decode(token);
+  return fetchUser({ auth0Id: decoded.sub });
+}
+
 export function authenticateStrict(allowedClaims) {
   return function(req, res, next) {
     authenticate(req, res).then((response) => {

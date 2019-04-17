@@ -1,7 +1,7 @@
 import express from 'express';
 import models from 'src/db/models';
 import { getAddressInfo } from 'src/services/address_manager';
-import { authenticateStrict } from 'src/services/authentication';
+import { authenticateStrict, getUserFromAuthToken } from 'src/services/authentication';
 
 const { politician } = models;
 const router = express.Router();
@@ -14,13 +14,36 @@ router.put('/', authenticateStrict(['admin:full']), updatePolitician);
 
 export default router;
 
+function shouldShowTestAccounts({ req, res, callback }) {
+  const { authorization } = req.headers;
+  if (authorization) {
+    getUserFromAuthToken({ req }).then(user => {
+      let showTestAccounts = false;
+      if (user.role.includes('admin:full')) showTestAccounts = true;
+      callback({ req, res, showTestAccounts });
+    }).catch(err => {
+      console.log('err', err);
+      res.json({ status: 'fail', err });
+    });
+    return;
+  }
+
+  callback({ req, res });
+}
+
 function getPoliticians(req, res) {
-  politician.findAllWithRelations().then(r => {
-    const politicians = r.map(p => politician.normalizedForUi(p));
-    res.json({ status: 'success', politicians });
-  }).catch(err => {
-    console.log(err);
-    res.json({ status: 'fail', err });
+  shouldShowTestAccounts({
+    req,
+    res,
+    callback: ({ req, res, showTestAccounts }) => {
+      politician.findAllWithRelations({ showTestAccounts }).then(r => {
+        const politicians = r.map(p => politician.normalizedForUi(p));
+        res.json({ status: 'success', politicians });
+      }).catch(err => {
+        console.log(err);
+        res.json({ status: 'fail', err });
+      });
+    }
   });
 }
 
@@ -40,22 +63,30 @@ function getPoliticians(req, res) {
 // }
 
 function getPoliticiansForLocation(req, res) {
-  const { city, state, district } = req.query;
-  let location = {};
-  let methodToCall = politician.findAllWithRelations;
-  if (district !== 'DISTRICT_NOT_FOUND') {
-    methodToCall = politician.findAllWithRelationsForLocation;
-    location = { city, state, district };
-  }
+  shouldShowTestAccounts({
+    req,
+    res,
+    callback: ({ req, res, showTestAccounts }) => {
+      const { city, state, district } = req.query;
+      let location = {};
+      let methodToCall = politician.findAllWithRelations;
+      if (district !== 'DISTRICT_NOT_FOUND') {
+        methodToCall = politician.findAllWithRelationsForLocation;
+        location = { city, state, district };
+      }
 
-  methodToCall({ location }).then(r => {
-    const politicians = r.map(p => politician.normalizedForUi(p));
-    res.json({ status: 'success', politicians });
-  }).catch(err => {
-    console.log(err);
-    res.json({ status: 'fail', err });
+      methodToCall({ location, showTestAccounts }).then(r => {
+        const politicians = r.map(p => politician.normalizedForUi(p));
+        res.json({ status: 'success', politicians });
+      }).catch(err => {
+        console.log(err);
+        res.json({ status: 'fail', err });
+      });
+    }
   });
 }
+
+
 
 function createPolitician(req, res) {
   politician.findDuplicates(req.body).then(r => {

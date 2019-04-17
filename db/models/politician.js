@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
     // politician.hasMany(models.committeeTerm);
   };
 
-  politician.findAllWithRelationsForLocation = ({ location }) => {
+  politician.findAllWithRelationsForLocation = ({ location, showTestAccounts }) => {
     const { state, city, district } = location;
     const officeHolderTermOptions = {
       where: {
@@ -57,26 +57,28 @@ module.exports = (sequelize, DataTypes) => {
         ]
       }
     };
-    return politician.findAllWithRelations({ officeHolderTermOptions });
+    return politician.findAllWithRelations({ officeHolderTermOptions, showTestAccounts });
   };
 
   politician.findAllWithRelations = (ops) => {
     const { Op } = models.Sequelize;
+    const showTestAccounts = ops && ops.showTestAccounts;
     const options = ops && ops.options;
     const officeHolderTermOptions = ops && ops.officeHolderTermOptions;
     const officeHolderTermOptionsWhere = ops
       && ops.officeHolderTermOptions
       && ops.officeHolderTermOptions.where || {};
     const contactInfoOptions = ops && ops.contactInfoOptions;
+    let filterTestAccountsCondition = { role: { [Op.notLike]: '%test%' } };
+    if (showTestAccounts) filterTestAccountsCondition = {};
+
     return politician.findAll({
       ...options,
       include: [
         {
           model: models.user,
           where: {
-            role: {
-              [Op.notLike]: '%test%'
-            }
+            ...filterTestAccountsCondition
           }
         },
         {

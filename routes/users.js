@@ -1,6 +1,6 @@
 import express from 'express';
 import models from 'src/db/models';
-import authenticateLenient from 'src/services/authentication';
+import { authenticateLenient } from 'src/services/authentication';
 
 const router = express.Router();
 
