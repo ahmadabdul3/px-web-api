@@ -73,11 +73,11 @@ module.exports = (sequelize, DataTypes) => {
       include: [
         {
           model: models.user,
-          // where: {
-          //   role: {
-          //     [Op.notLike]: '%test%'
-          //   }
-          // }
+          where: {
+            role: {
+              [Op.notLike]: '%test%'
+            }
+          }
         },
         {
           model: models.officeHolderTerm,

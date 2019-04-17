@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     auth0Id: DataTypes.TEXT,
     role: DataTypes.TEXT,
     photoUrl: DataTypes.TEXT,
+    deviceId: DataTypes.TEXT,
   }, {});
 
   UserModel.associate = function(models) {
