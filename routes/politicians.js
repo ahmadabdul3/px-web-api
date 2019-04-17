@@ -17,7 +17,10 @@ export default router;
 function shouldShowTestAccounts({ req, res, callback }) {
   const { authorization } = req.headers;
   if (authorization) {
-    getUserFromAuthToken({ req }).then(user => {
+    // - if we perform authorization on a route, the user object will be added
+    //   to the req object, so no need to fetch the user from the db again
+    // - check the findUser method below this one
+    findUser({ req }).then(user => {
       let showTestAccounts = false;
       if (user.role.includes('admin:full')) showTestAccounts = true;
       callback({ req, res, showTestAccounts });
@@ -29,6 +32,11 @@ function shouldShowTestAccounts({ req, res, callback }) {
   }
 
   callback({ req, res });
+}
+
+function findUser({ req }) {
+  if (req.user) return Promise.resolve(user);
+  return getUserFromAuthToken({ req });
 }
 
 function getPoliticians(req, res) {
