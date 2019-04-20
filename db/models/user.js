@@ -30,6 +30,9 @@ module.exports = (sequelize, DataTypes) => {
         return UserModel.update({ deviceId: user.deviceId }, {
           where: { email },
           returning: true,
+        }).then(updateUserRes => {
+          const secondIndex = updateUserRes && updateUserRes[1] || [];
+          return secondIndex[0] || {};
         });
       }
       return UserModel.create(user);
