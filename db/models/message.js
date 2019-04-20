@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
     let newMessage;
     return messageModel.create(message).then(newMessageRes => {
       newMessage = newMessageRes;
-      return models.user.getMessageSenderAndReceiver({ message }});
+      return models.user.getMessageSenderAndReceiver({ message });
     }).then(users => {
       if (!users) return;
       const { sender, receiver } = users;
