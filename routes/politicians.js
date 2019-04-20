@@ -35,7 +35,7 @@ function shouldShowTestAccounts({ req, res, callback }) {
 }
 
 function findUser({ req }) {
-  if (req.user) return Promise.resolve(user);
+  if (req.user) return Promise.resolve(req.user);
   return getUserFromAuthToken({ req });
 }
 

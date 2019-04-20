@@ -15,9 +15,7 @@ function getMessages(req, res) {
   console.log('auth0i', auth0Id);
   models.user.findOne({ where: { auth0Id }}).then(user => {
     if (!user) throw ({ message: 'User with id ' + auth0Id + ' does not exist' });
-    console.log('user', user);
     const userId = user.dataValues.id;
-    console.log('user id', userId);
     return models.message.getLatestForAllThreads({ userId });
   }).then(messageRes => {
     res.json({ messageData: messageRes, message: 'success' });
@@ -50,7 +48,7 @@ function createMessage(req, res) {
   }
 
   Promise.resolve().then(() => {
-    if (message.parentId) return models.message.create(message);
+    if (message.parentId) return models.message.createWithPushNotification({ message });
     return validateNumOfMessages({ req, message });
   }).then(messageRes => {
     return models.message.getLatestForAllThreads({ userId: message.senderId });
@@ -80,6 +78,6 @@ function validateNumOfMessages({ req, message }) {
       if (message.dataValues.createdAt.getMonth() === thisMonth) numMessagesSent++;
     });
     if (numMessagesSent > 2) throw({ name: 'MessageLimitReached', message: 'message limit reached' });
-    return models.message.create(message);
+    return models.message.createWithPushNotification({ message });
   });
 }

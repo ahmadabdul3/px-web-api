@@ -26,13 +26,20 @@ module.exports = (sequelize, DataTypes) => {
     user.email = email;
 
     return UserModel.findOne({ where: { email } }).then(existingUser => {
-      if (existingUser) return { user: existingUser, status: 'px_existing' };
+      if (existingUser) {
+        return UserModel.update({ deviceId: user.deviceId }, {
+          where: { email },
+          returning: true,
+        });
+      }
       return UserModel.create(user);
-    }).then(userRes => {
-      if (userRes.status === 'px_existing') return userRes;
-      return { user: userRes, status: 'px_new' };
     });
   };
+
+  UserModel.getUserIdentifier = ({ user }) => {
+    if (!user.firstName) return user.email || 'a PX user';
+    return user.firstName + ' ' + (user.lastName || '');
+  }
 
   return UserModel;
 };

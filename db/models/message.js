@@ -1,6 +1,7 @@
 'use strict';
 import { messageStatus } from 'src/constants/messaging';
 import models from 'src/db/models';
+import { sendPushNotifications } from 'src/services/push_notification_manager';
 
 module.exports = (sequelize, DataTypes) => {
   const messageModel = sequelize.define('message', {
@@ -45,6 +46,22 @@ module.exports = (sequelize, DataTypes) => {
     //    this message is replying to
     messageModel.belongsTo(messageModel, { as: 'parent', foreignKey: 'parentId' });
   };
+
+  messageModel.createWithPushNotification = ({ message }) => {
+    let newMessage;
+    return messageModel.create(message).then(newMessageRes => {
+      newMessage = newMessageRes;
+      return models.user.findOne({ where: { id: newMessage.receiverId }});
+    }).then(user => {
+      if (!user || !user.deviceId) return;
+      const notifications = [{
+        to: user.deviceId,
+        body: 'New message from ' + models.user.getUserIdentifier({ user }),
+        data: {}
+      }];
+      return sendPushNotifications({ notifications });
+    }).then(() => newMessage);
+  }
 
   messageModel.getLatestForAllThreads = ({ userId }) => {
     const query = `\
