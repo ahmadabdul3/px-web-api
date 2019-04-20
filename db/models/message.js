@@ -54,10 +54,13 @@ module.exports = (sequelize, DataTypes) => {
       return models.user.findOne({ where: { id: newMessage.receiverId }});
     }).then(user => {
       if (!user || !user.deviceId) return;
+      const userIdentifier = models.user.getUserIdentifier({ user });
       const notifications = [{
         to: user.deviceId,
-        body: 'New message from ' + models.user.getUserIdentifier({ user }),
-        data: {}
+        body: 'New message from ' + userIdentifier,
+        data: {
+          message: 'New message from ' + userIdentifier,
+        }
       }];
       return sendPushNotifications({ notifications });
     }).then(() => newMessage);
