@@ -39,6 +39,17 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
+  UserModel.getMessageSenderAndReceiver = ({ message }) => {
+    const id = [message.senderId, message.receiverId];
+    return UserModel.find({ where: { id } }).then(users => {
+      return users.reduce((all, u) => {
+        if (u.id === message.senderId) all.sender = u;
+        else if (u.id === message.receiverId) all.receiver = u;
+        return all;
+      }, {});
+    });
+  }
+
   UserModel.getUserIdentifier = ({ user }) => {
     if (!user.firstName) return user.email || 'a PX user';
     return user.firstName + ' ' + (user.lastName || '');
