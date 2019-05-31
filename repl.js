@@ -10,6 +10,7 @@ import {
 import { getAllWardsAsObj } from 'src/services/location_finder';
 import { getAddressInfo } from 'src/services/address_manager';
 import prepPoliticianModelForUi from 'src/services/ui_data_prep/ui_data_prepper_politician';
+import { sendPushNotifications } from 'src/services/push_notification_manager';
 
 const { sequelize } = db;
 const envName = process.env.NODE_ENV || "dev";
@@ -34,6 +35,7 @@ replServer.context.getAddressInfo = getAddressInfo;
 replServer.context.prepPoliticianModelForUi = prepPoliticianModelForUi;
 replServer.context.createRacesForCurrentPositions = createRacesForCurrentPositions;
 replServer.context.createCandidatesForCurrentPositions = createCandidatesForCurrentPositions;
+replServer.context.sendPushNotifications = sendPushNotifications;
 
 function getAll(modelName) {
   db[modelName].findAll().then(res => {

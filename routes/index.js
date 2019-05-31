@@ -10,6 +10,7 @@ import { determineWardNumberFromLocation } from 'src/services/location_finder';
 import { getAddressInfo } from 'src/services/address_manager';
 import userRoutes from './users';
 import messageRoutes from './messages';
+import raceDetailsRoutes from './race_details';
 
 
 const router = express.Router();
@@ -18,6 +19,7 @@ router.use('/committee-terms', committeeTermRoutes);
 router.use('/races', raceRoutes);
 router.use('/users', userRoutes);
 router.use('/messages', messageRoutes);
+router.use('/race-details', raceDetailsRoutes);
 
 router.post('/device-ids', (req, res) => {
   const { deviceId } = req.body;
