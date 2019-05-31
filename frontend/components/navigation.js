@@ -20,6 +20,7 @@ export default class Navigation extends Component {
         </div>
         <div className='nav-right'>
           <NavItem url={appRoutes.home} text='Home' />
+          <NavItem url='/candidates' text='Candidates' />
           {
             // <div className='nav-item' onClick={this.logout}>
             //   Logout

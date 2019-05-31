@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import HomePageContainer from 'src/frontend/containers/home_page_container';
+import CandidatesPageContainer from 'src/frontend/containers/candidates_page_container';
 import appRoutes from 'src/constants/routes';
 
 export default class AppBody extends Component {
@@ -8,6 +9,7 @@ export default class AppBody extends Component {
     return (
       <div className='app-body'>
         <Route exact path={appRoutes.home} component={HomePageContainer} />
+        <Route exact path='/candidates' compose={CandidatesPageContainer} />
       </div>
     );
   }

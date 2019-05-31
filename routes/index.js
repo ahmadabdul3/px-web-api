@@ -19,6 +19,18 @@ router.use('/races', raceRoutes);
 router.use('/users', userRoutes);
 router.use('/messages', messageRoutes);
 
+router.post('/device-ids', (req, res) => {
+  const { deviceId } = req.body;
+  models.deviceIds.findAll({ where: { deviceId }}).then(r => {
+    if (r && r.length > 0) return;
+    return models.deviceIds.create({ deviceId, status: 'active' });
+  }).then(r => {
+    res.json({ message: '' });
+  }).catch(e => {
+    res.status(400).json({ message: 'error', data: e });
+  })
+});
+
 router.get('/address-info', (req, res) => {
   const { address } = req.query;
   getAddressInfo({ address }).then(addressInfo => {
