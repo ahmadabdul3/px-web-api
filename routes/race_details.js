@@ -328,7 +328,7 @@ function getPoliceData() {
     `Our police department is in a great place. We have one of the most diverse police forces in the country!`,
   ];
   data[1].stances = [
-    `"I haven't had a contract in 3 years." That's what many officers tell me. "Treat us like human." We need to treat our officers with respect, compensation and support.`,
+    `New Haven Police Officers have told me: "I haven't had a contract in 3 years, treat us like human." We need to treat our officers with respect, compensation and support.`,
   ];
   data[2].stances = [
     `Our police outflow is a problem, but what we need is a stronger force that is properly trained and focused in policing our communities for a better future.`,

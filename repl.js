@@ -37,6 +37,21 @@ replServer.context.createRacesForCurrentPositions = createRacesForCurrentPositio
 replServer.context.createCandidatesForCurrentPositions = createCandidatesForCurrentPositions;
 replServer.context.sendPushNotifications = sendPushNotifications;
 
+// db.deviceIds.findAll().then(r => {
+//   deviceIds = r.map(record => record.dataValues.deviceId);
+// })
+//
+// const notifications = deviceIds.map(id => {
+//   return {
+//     to: id,
+//     body: `June 10th: deadline for changing your party affiliation for this year's election`,
+//     // data: {
+//     //   message: `We will be updating the app continuously! Don't forget, you can send us feedback via email in the settings page!`,
+//     //   title: 'Thanks for downloading PX',
+//     // }
+//   };
+// });
+
 function getAll(modelName) {
   db[modelName].findAll().then(res => {
     res.forEach(record => {
