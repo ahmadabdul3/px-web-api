@@ -391,7 +391,7 @@ function getHomeOwnershipData() {
     `New Haven city taxes has increased by 11%, this has to stop.`,
   ];
   data[2].stances = [
-    `No Information`,
+    `I stand for helping homeowners by reducing the tax mill rate that is income sensitive, offering a city-based partnership with CHFA for low-income first-time buyers, and providing a pathway of communication to reduce eviction rates.`,
   ];
   data[3].stances = [
     `Helping homeowners is connected to our budget issues. We need to live within our means. Retain or lower taxes where possible!`,
@@ -454,7 +454,9 @@ function getOverviewData() {
       missionStatement: `I'm running for Mayor to stop the city from hemmoraging money and to ultimately advocate for the underrepsented!`,
       imageUrl: 'https://res.cloudinary.com/politixentral/image/upload/v1558813777/Screen_Shot_2019-05-25_at_3.48.39_PM.png',
       WhatIStandFor: [
-        `No Information`,
+        'Inclusive Affordable Housing',
+        'City-wide Green Energy',
+        'Jobs Security and Growth',
       ],
     },
     {
